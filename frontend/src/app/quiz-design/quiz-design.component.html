@@ -1,0 +1,262 @@
+<div *ngIf="addQuestions" class="fixed z-10 left-0 top-0 bg-black bg-opacity-50 w-screen h-screen flex justify-center items-center">
+    <div class="bg-white rounded shadow-md m-2 w-[50%] h-[50%] overflow-y-auto">
+
+        <div class="flex justify-between mb-4">
+            <span class="w-1/3 text-center bg-gray-50 font-semibold border-gray-200 border-r p-4 hover:cursor-pointer" [ngClass]="{'bg-white': blankQuestion, 'border-b': !blankQuestion}" (click)="openBlankQuestion()">
+                Blank Question
+            </span>
+            <span class="w-1/3 text-center bg-gray-50 font-semibold border-gray-200 border-r p-4 hover:cursor-pointer" [ngClass]="{'bg-white': questionBank, 'border-b': !questionBank}" (click)="openQuestionBank()">
+                Question Bank
+            </span>
+            <span class="w-1/3 text-center bg-gray-50 font-semibold border-gray-200 p-4 hover:cursor-pointer" [ngClass]="{'bg-white': questionGenerator, 'border-b': !questionGenerator}" (click)="openQuestionGenerator()">
+                Question Generator
+            </span>
+        </div>
+
+        <div *ngIf="blankQuestion" class="pl-2 flex flex-col gap-y-2 w-1/2 justify-start">
+
+            <button (click)="createQuestion('Multiple Choice')" class="button bg-gray-50 hover:bg-gray-100 py-2 border rounded-sm shadow-sm">
+                Multiple Choice
+            </button>
+            <button (click)="createQuestion('True/False')" class="button bg-gray-50 hover:bg-gray-100 py-2 border rounded-sm shadow-sm">
+                True False
+            </button>
+            <button (click)="createQuestion('Multiple Answers')" class="button bg-gray-50 hover:bg-gray-100 py-2 border rounded-sm shadow-sm">
+                Multiple Answers
+            </button>
+
+        </div>
+
+        <div *ngIf="questionBank" class="overflow-y-scroll h-[82%]">
+
+            <div class="w-auto mx-2 mx-auto rounded bg-gray-50 border shadow">
+                <div class="flex border-b-2">
+                    <div class="relative inline-block text-left">
+                        <div class="mr-1">
+                            <button type="button" (click)="toggleDropdown()" class="font-bold flex-shrink-0 z-10 rounded inline-flex items-center py-4 px-4 text-lg font-bold text-center text-gray-900 bg-gray-50 hover:bg-gray-200" id="menu-button" aria-expanded="true" aria-haspopup="true">
+                              {{category}}
+                              <svg class="w-2.5 h-2.5 ms-3 mt-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                              </svg>
+                            </button>
+                          </div>
+                          <div *ngIf="isDropdownOpen" class="absolute bg-gray-50 z-10 mt-2 w-56 origin-top-right rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+                            <div class="py-1" role="none">
+                              <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
+                              <button *ngFor="let category of categories" (click)="updateSelectedOption(category)" class=" block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-0">{{category}}</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="relative inline-flex items-center w-full pr-2">
+                        <input type="text" [(ngModel)]="searchValue" (input)="filterResults()" name="searchValue" id="searchValue" class="border block p-2 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded focus:ring-blue-500 focus:border-blue-500" placeholder="Search Questions, Type..." required>
+                        <div class="absolute opacity-25 pr-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.--><path fill="#000000" d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
+                        </div>
+                    </div>
+                    <button *ngIf="selectedQuestions.length > 0" (click)="addToQuiz()" type="button" class="text-white whitespace-nowrap bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add</button>
+                </div>
+                <div class="flow-root px-3">
+                    <ul role="list" class="divide-y divide-gray-200">
+                        <li *ngFor="let question of filteredQuestionsList" class="py-4">
+                            <label class="cursor-pointer py-4" for="checkbox + {{question.id}}">
+                                <div class="grid grid-cols-11 gap-2">
+                                    <div class="col-span-9 flex gap-2">
+                                            <div class="relative flex cursor-pointer">
+                                                <input type="checkbox" id="checkbox + {{question.id}}" class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:bg-gray-50 checked:before:bg-gray-900 hover:before:opacity-10" [checked]="selectedQuestions.includes(question)" (change)="updateSelection(question, $event)">
+                                            <span class="absolute transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"
+                                                    stroke="currentColor" stroke-width="1">
+                                                    <path fill-rule="evenodd"
+                                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                    clip-rule="evenodd"></path>
+                                                </svg>
+                                            </span>
+                                            </div>
+        
+                                        <p title={{question.question}} class="text-sm font-medium truncate">
+                                            {{question.question}}
+                                        </p>
+                                    </div>
+                                    <div class="col-span-2">
+                                        <p class="text-sm font-medium text-gray-900 truncate">
+                                            {{ question.questionType }}
+                                        </p>
+                                    </div>                                
+                                </div>
+                            </label>
+        
+                                         
+                        </li>
+                    </ul>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="questionGenerator && !searched" class="flex flex-col justify-center items-center gap-16 pt-16">
+            <input class="outline-none text-4xl text-center font-semibold" [(ngModel)]="topic" #ctrl="ngModel" required placeholder="Enter Your Topic!">
+            <button (click)="generateQuestions()" class="bg-blue-500 hover:bg-blue-700 w-[20%] text-white font-bold py-2 px-4 rounded">
+                Search
+            </button>
+        </div>
+        <div *ngIf="questionGenerator && searched" class="h-full mx-2">
+
+            <div class="relative flex justify-center items-center gap-2 pl-2 px-4 py-1">
+                <div class="flex items-center">
+                    <div class="absolute ps-3 opacity-25 pr-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.--><path fill="#000000" d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
+                    </div>
+                    <input type="text" name="search" [(ngModel)]="topic" class="p-1 ps-12 border rounded-md font-semibold" placeholder="{{topic}}">    
+                </div>
+                <button (click)="generateQuestions()" type="button" class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 px-4 py-1 rounded-sm text-center">Refresh</button>
+            </div>
+
+            <div *ngFor="let question of generatedQuestions; let i = index" class="flex flex-col gap-2 p-3 border m-1 bg-gray-50 rounded-sm">
+                
+                <div class="font-semibold text-md flex justify-between items-center">
+                    <span (click)="unhideChoices(i)" class="flex gap-2 items-center hover:cursor-pointer">
+                        {{question.question}}
+                        <svg class="fill-gray-400" xmlns="http://www.w3.org/2000/svg" height="10" width="10" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/></svg>
+                    </span>
+                    <button (click)="addGeneratedQuestion(i)" type="button" class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 px-2 py-1 rounded-sm text-center">Add</button>
+                </div>
+
+                <div id="dropdown{{i}}" class="hidden flex flex-col">
+                    <div class="flow-root">
+                        <ul role="list" class="divide-y divide-gray-300">
+                            <li *ngFor="let choice of question.choices; let i = index" class="py-3 sm:py-4">
+                                <div class="flex items-center">
+                                    <div class="flex-1 min-w-0 ms-4 font-semibold">
+                                        {{choice}}
+                                    </div>
+                                    <div class="pr-4">
+                                        <div *ngIf="question.answer.includes(i)" class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            <svg class="fill-green-500" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><style>svg{fill:#ffffff}</style><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
+                                        </div>
+                                        <div *ngIf="!(question.answer.includes(i))" class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                            <svg class="fill-red-500" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 384 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><style>svg{fill:#ffffff}</style><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                   </div>
+                </div>
+                
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<div class="bg-teal-900 flex h-screen">
+    
+    <div class="h-12 ml-48 items-center bg-gray-50 flex inline-flex fixed z-30 left-0 right-0 justify-between">
+        <div class="ml-12 h-8 w-1/4 flex inline-flex items-center overflow-hidden text-lg whitespace-nowrap outline-none" contenteditable="true" (blur)="onTitleBlur($event)">
+            {{quiz?.title}}
+        </div>
+        <button (click)="publishQuiz()" class="mr-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            Save Quiz
+        </button>
+    </div>
+
+    <aside id="default-sidebar" class="left-0 fixed z-40 w-48 h-full border" aria-label="Sidebar">
+        <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50">
+            <div class="space-y-2 h-full font-medium question-list hover:cursor-grab active:cursor-grabbing" cdkDropList (cdkDropListDropped)="drop($event)">
+                <div (click)="changeCurrentQuestion(quiz?.questions.indexOf(question))" class="question-box border border-gray-300 p-2 rounded-lg text-center h-28 w-42 flex flex-col overflow-hidden" *ngFor="let question of quiz?.questions" cdkDrag>
+                    <span class="text-xs shrink">
+                        {{question.question}}
+                    </span>
+                    <span class="text-2xl">
+                        {{question.timeSeconds}}
+                    </span>           
+                </div>
+
+                <div (click)="toggleAddQuestions()" class="hover:cursor-pointer question-box border border-gray-300 p-2 rounded-lg h-28 w-42 flex flex-col justify-center overflow-hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="3rem" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.--><path fill="#000000" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>
+                </div>
+                
+
+            </div>
+        </div>
+    </aside>
+
+    
+    <div class="container ml-48 pt-28">
+        <div class="p-20 mx-auto w-3/4 mb-2 text-2xl text-center text-white border-dashed border rounded-lg font-semibold outline-none" contenteditable="true" (blur)="onQuestionBlur($event)">
+            {{quiz?.questions[currentQuestion].question}}
+        </div>
+        <div class="w-3/4 mx-auto grid grid-cols-2 gap-4">
+                <div *ngFor="let choice of quiz?.questions[currentQuestion]?.choices; let i = index" class="mt-2 h-28 bg-gray-50 rounded flex gap-2 items-center justify-center overflow-y-auto">
+                        <div class="w-3/4 text-lg font-semibold outline-none" contenteditable="true" (blur)="onChoiceBlur($event, i)">
+                            {{choice}}
+                        </div>
+                        <button (click)="changeCorrectChoice(i)" class="flex flex-end">
+                            <div *ngIf="displayAnswer(i)" class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="16" width="14" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.--><path fill="#000000" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>                            </div>
+                            <div *ngIf="!displayAnswer(i)" class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="16" width="12" viewBox="0 0 384 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.--><path fill="#000000" d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>                            </div>
+                        </button>
+                </div>
+        </div>
+                
+    </div>
+
+    <nav class="flex w-72 h-full bg-gray-50 pt-12">
+        <div class="w-full flex flex-col gap-y-4 mx-auto px-4 py-8">
+            <div class="relative">
+                <span class="flex gap-x-2 items-center font-semibold mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M464 256A208 208 0 1 1 48 256a208 208 0 1 1 416 0zM0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"/></svg>
+                    Time
+                </span>
+                <div>
+                    <button (click)="toggleTimeDropdown()" class="inline-flex w-full justify-between gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" id="menu-button" aria-expanded="true" aria-haspopup="true">
+                        {{quiz?.questions[currentQuestion].timeSeconds}} seconds
+                        <svg class="w-2.5 h-2.5 ms-3 mt-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                        </svg>
+                    </button>
+                    </div>
+                    <div *ngIf="timeDropdown" class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+                        <div class="py-1" role="none">
+                    <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
+                        <button (click)="updateTime(time)" *ngFor="let time of times" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-0">{{time}} seconds</button>
+                    </div>
+                </div>
+            </div>
+            <div class="relative inline-block border-b-2 pb-4">
+                <span class="flex gap-x-2 items-center font-semibold mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="16" width="18" viewBox="0 0 576 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M287.9 0c9.2 0 17.6 5.2 21.6 13.5l68.6 141.3 153.2 22.6c9 1.3 16.5 7.6 19.3 16.3s.5 18.1-5.9 24.5L433.6 328.4l26.2 155.6c1.5 9-2.2 18.1-9.7 23.5s-17.3 6-25.3 1.7l-137-73.2L151 509.1c-8.1 4.3-17.9 3.7-25.3-1.7s-11.2-14.5-9.7-23.5l26.2-155.6L31.1 218.2c-6.5-6.4-8.7-15.9-5.9-24.5s10.3-14.9 19.3-16.3l153.2-22.6L266.3 13.5C270.4 5.2 278.7 0 287.9 0zm0 79L235.4 187.2c-3.5 7.1-10.2 12.1-18.1 13.3L99 217.9 184.9 303c5.5 5.5 8.1 13.3 6.8 21L171.4 443.7l105.2-56.2c7.1-3.8 15.6-3.8 22.6 0l105.2 56.2L384.2 324.1c-1.3-7.7 1.2-15.5 6.8-21l85.9-85.1L358.6 200.5c-7.8-1.2-14.6-6.1-18.1-13.3L287.9 79z"/></svg>                    
+                    Points
+                </span>
+                <div>
+                    <button type="button" (click)="togglePointsDropdown()" class="inline-flex w-full justify-between gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" id="menu-button" aria-expanded="true" aria-haspopup="true">
+                        {{quiz?.questions[currentQuestion].points}}
+                        <svg class="w-2.5 h-2.5 ms-3 mt-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                        </svg>
+                    </button>
+                    </div>
+                    <div *ngIf="pointsDropdown" class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+                        <div class="py-1" role="none">
+                    <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
+                        <button (click)="updatePoints(point)" *ngFor="let point of points" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-0">{{point}}</button>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center flex gap-2">
+                <button (click)="deleteQuestion()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                    Delete
+                </button>
+                <button (click)="duplicateQuestion()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                    Duplicate
+                </button>
+            </div>
+        </div>
+      </nav>
+    
+</div>
+

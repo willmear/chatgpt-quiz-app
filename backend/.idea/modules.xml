@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.wxm158.quiz.quiz-user-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/com.wxm158.quiz.quiz-user-service.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/prompt-generation.main.iml" filepath="$PROJECT_DIR$/.idea/modules/prompt-generation.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/quiz-api-gateway.main.iml" filepath="$PROJECT_DIR$/.idea/modules/quiz-api-gateway.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/quiz-class-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/quiz-class-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/quiz-core-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/quiz-core-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/quiz-play-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/quiz-play-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/quiz-user-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/quiz-user-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/wxm158.iml" filepath="$PROJECT_DIR$/.idea/wxm158.iml" />
+    </modules>
+  </component>
+</project>

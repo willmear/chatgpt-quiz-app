@@ -1,0 +1,45 @@
+<div class="h-screen">
+
+    <!-- question and countdown -->
+    <div *ngIf="quizSession?.state === state.PRE_QUESTION">
+        <div class="flex h-screen">
+            <div>
+                {{currentQuestion.question}}
+            </div>
+            <div>
+                {{countdown}}
+            </div>
+        </div>
+    </div>
+
+    <!-- number of responses left and countdown -->
+    <div *ngIf="quizSession?.state === state.QUESTION">
+        <div *ngFor="let choice of currentQuestion.choices">
+            {{choice}}
+        </div>
+        <div>
+            {{countdown}}
+        </div>
+    </div>
+
+    <div *ngIf="quizSession?.state === state.POST_QUESTION">
+        <div>
+            Calculating Scores...
+        </div>
+    </div>
+
+    <div *ngIf="quizSession?.state === state.LEADERBOARD">
+        <div *ngFor="let participant of participants">
+            <div>{{participant.alias}}: {{participant.points}}</div>
+        </div>
+        <!-- MIGHT NOT BE PRE QUESTION AND ACTUALLY FINISH UPDATE THIS -->
+        <button (click)="updateState(state.PRE_QUESTION)">Next</button>
+    </div>
+
+    <div *ngIf="quizSession?.state === state.FINISHED">
+        <div>
+            Game over
+        </div>
+    </div>
+
+</div>

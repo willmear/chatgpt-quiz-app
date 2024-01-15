@@ -1,0 +1,85 @@
+server:
+  port: 8082
+
+
+
+management:
+  endpoint.gateway.enabled: true
+  endpoints.web.exposure.include: gateway
+
+spring:
+  application:
+    name: quiz-api-gateway
+
+  ## GATEWAY CONFIGURATIONS
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOriginPatterns:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        ## USER SERVICE
+        - id: quiz-user-service
+          uri: lb://quiz-user-service
+          predicates:
+            - Path=/user/**
+          filters:
+            - StripPrefix=1
+        ## CLASS SERVICE
+        - id: quiz-class-service
+          uri: lb://quiz-class-service
+          predicates:
+            - Path=/class/**
+          filters:
+            - StripPrefix=1
+            - AuthFilter
+        ## QUESTION GENERATION
+        - id: question-generation
+          uri: lb://question-generation
+          predicates:
+            - Path=/question/**
+          filters:
+            - StripPrefix=1
+            - AuthFilter
+        ## CORE SERVICE
+        - id: quiz-core-service
+          uri: lb://quiz-core-service
+          predicates:
+            - Path=/core/**
+          filters:
+            - StripPrefix=1
+            - AuthFilter
+        ## PLAY SERVICE with AuthFilter
+        - id: quiz-play-service
+          uri: lb://quiz-play-service
+          predicates:
+            - Path=/play/**
+          filters:
+            - StripPrefix=1
+            - name: AuthFilter
+        # PLAY SERVICE without AuthFilter
+        - id: quiz-play-service-no-auth
+          uri: lb://quiz-play-service
+          predicates:
+            - Path=/join/**
+          filters:
+            - StripPrefix=1
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8081/eureka

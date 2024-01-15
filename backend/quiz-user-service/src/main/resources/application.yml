@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: quiz-user-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: will
+    password: password
+    url: jdbc:postgresql://localhost:5432/user-service-db
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: 'true'
+    show-sql: true
+
+
+#  cloud:
+#    azure:
+#      active-directory:
+#        enabled: true
+#        profile:
+#          tenant-id: aca9dc4b-d4ec-4b0c-8d2c-baf2ef0d26a9
+#        credential:
+#          client-id: 4ef240f8-c2ed-4167-92d1-38c6fa431dd3
+#          client-secret: lRf8Q~MJb7XffMaPaxF8xenIIGB9Tef2pONq.b.K
+#        redirect-uri-template: http://localhost:8083/login/oauth2/code/
+#        login-flow: sign-up-or-sign-in
+#        logout-success-url: http://localhost:8080
+
+server:
+  port: 8083
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8081/eureka
+
+info:
+  app:
+    name: ${spring.application.name}
+
+application:
+  security:
+    jwt:
+      secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      expiration: 86400000 # a day
+      refresh-token:
+        expiration: 604800000 # 7 days

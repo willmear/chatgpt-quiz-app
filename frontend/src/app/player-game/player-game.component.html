@@ -1,0 +1,26 @@
+<div *ngIf="currentQuestion" class="bg-teal-900 h-screen">
+
+    <div *ngIf="currentState===state.PRE_QUESTION">
+        Get Ready
+    </div>
+
+    <div *ngIf="(currentQuestion.questionType=='Multiple Choice' || currentQuestion.questionType=='Multiple Answers' || currentQuestion.questionType=='True/False') && !questionAnswered && currentState===state.QUESTION" class="grid grid-cols-2 gap-2 h-screen">
+        <div (click)="submitAnswer(i)" *ngFor="let choice of currentQuestion.choices; let i = index" class="bg-blue-600 flex items-center justify-center">
+            
+            {{choice}}
+
+        </div>
+    </div>
+
+    <div *ngIf="questionAnswered && currentState===state.QUESTION">
+        Wait for Results!
+    </div>
+
+    <div *ngIf="currentState===state.POST_QUESTION">
+        loading...
+    </div>
+
+    <div *ngIf="currentState===state.LEADERBOARD">
+        check leaderboard
+    </div>
+</div>

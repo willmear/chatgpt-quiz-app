@@ -1,0 +1,28 @@
+<section class="bg-teal-600">
+    <div *ngIf="correctJoinCode===false" class="flex flex-col items-center justify-center h-screen lg:py-0">
+        <div class="shadow md:mt-0 bg-gray-50 rounded border xl:p-0">
+            <div class="p-4">
+                <form class="flex flex-col items-center w-full" #joinGameForm="ngForm" (ngSubmit)="join(joinGameForm.value)">
+                    
+                    <input type="text" name="code" id="code" class="text-center w-full font-bold bg-gray-50 border border-gray-300 border-2 text-gray-900 rounded focus:ring-primary-600 focus:border-primary-600 block py-3 px-6" placeholder="Enter PIN" required="" ngModel>
+                    <button type="submit" class="w-full mt-2 text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded text-md py-3 text-center">Enter!</button>
+                    <p>{{errorMessage}}</p>
+                </form>
+                
+            </div>
+        </div>
+    </div>
+    <div *ngIf="correctJoinCode===true" class="flex flex-col items-center justify-center h-screen lg:py-0">
+        <div class="shadow md:mt-0 bg-gray-50 rounded border xl:p-0">
+            <div class="p-4">
+                <form class="flex flex-col items-center w-full" #enterNameForm="ngForm" (ngSubmit)="enterName(enterNameForm.value)">
+                    
+                    <input type="text" name="alias" id="alias" class="text-center w-full font-bold bg-gray-50 border border-gray-300 border-2 text-gray-900 rounded focus:ring-primary-600 focus:border-primary-600 block py-3 px-6" placeholder="Enter Alias" required="" ngModel>
+                    <button type="submit" class="w-full mt-2 text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded text-md py-3 text-center">Play!</button>
+                    <p>{{errorMessage}}</p>
+                </form>
+                
+            </div>
+        </div>
+    </div>
+  </section>

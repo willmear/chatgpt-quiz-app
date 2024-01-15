@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: question-generation
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: will
+    password: password
+    url: jdbc:postgresql://localhost:5432/question-generation-db
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: 'true'
+    show-sql: true
+
+server:
+  port: 8085
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8081/eureka
+
+info:
+  app:
+    name: ${spring.application.name}

@@ -1,0 +1,5 @@
+<button (click)="start()" type="button" class="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded text-sm w-full sm:w-auto px-3 py-2 text-center">Start</button>
+<p>Join Code: {{quizSession?.joinCode}}</p>
+<div *ngFor="let participant of participants">
+    <div>{{participant}}</div>
+</div>

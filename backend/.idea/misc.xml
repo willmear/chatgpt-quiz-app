@@ -1,0 +1,19 @@
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/prompt-generation" />
+    <file type="web" url="file://$PROJECT_DIR$/quiz-api-gateway" />
+    <file type="web" url="file://$PROJECT_DIR$/quiz-class-service" />
+    <file type="web" url="file://$PROJECT_DIR$/quiz-core-service" />
+    <file type="web" url="file://$PROJECT_DIR$/quiz-core-service/quiz-core-service" />
+    <file type="web" url="file://$PROJECT_DIR$/quiz-play-service" />
+    <file type="web" url="file://$PROJECT_DIR$/quiz-service-registry" />
+    <file type="web" url="file://$PROJECT_DIR$/quiz-user-service" />
+  </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="17" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="jpab" />
+  </component>
+</project>
