@@ -23,6 +23,11 @@ public class UserController {
         return userService.getUserById(id);
     }
 
+    @GetMapping("/user")
+    public UserResponse getUser(@RequestHeader("x-auth-user-id") String userId) {
+        return userService.getUser(Long.valueOf(userId));
+    }
+
     @GetMapping("/byIds")
     public List<UserResponse> getUsersByIds(@RequestParam List<Long> ids) {
         return userService.getUsersByIds(ids);

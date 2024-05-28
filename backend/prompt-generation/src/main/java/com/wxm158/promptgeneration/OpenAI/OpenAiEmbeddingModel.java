@@ -24,7 +24,7 @@ import static java.time.Duration.ofSeconds;
 import static java.util.stream.Collectors.toList;
 
 /**
- * Represents an OpenAI embedding model, such as text-embedding-ada-002.
+ * Represents an OpenAI embedding model, such as text-embedding-ada-002. From LangChain4J.
  */
 public class OpenAiEmbeddingModel implements EmbeddingModel, TokenCountEstimator {
 

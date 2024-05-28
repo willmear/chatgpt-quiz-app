@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../service/user.servce';
-import { Router } from '@angular/router';
+import { Router, RouterStateSnapshot } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -12,6 +12,14 @@ export class HomeComponent implements OnInit {
   constructor(private userService: UserService, private router: Router) {  }
 
   ngOnInit(): void { }
+
+  classes() {
+    this.router.navigate(['/login'], { queryParams: { returnUrl: 'classroom' }});
+  }
+
+  isLoggedIn(): boolean {
+    return this.userService.isLoggedIn() != null;
+  }
 
   logout() {
     this.userService.clear();

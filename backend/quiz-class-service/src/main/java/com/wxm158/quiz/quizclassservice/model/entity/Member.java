@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
 @Data
@@ -19,5 +20,7 @@ public class Member {
     @GeneratedValue
     private Long id;
     private Long memberId;
-    private Long classroomId;
+
 }
+
+

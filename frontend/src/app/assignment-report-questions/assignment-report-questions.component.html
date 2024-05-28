@@ -1,0 +1,24 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+<app-report-banner></app-report-banner>
+
+<div class="mt-12 ml-20 pb-5">
+
+
+    <div class="w-[80%] mx-auto mb-5 bg-white p-10 rounded-sm shadow-md" *ngFor="let question of assignment?.questions; let i = index">
+
+        <div class="flex justify-between pb-5">
+            <span class="">{{ question.question }}</span>
+            <span class="font-semibold text-gray-700 whitespace-nowrap">{{ question.questionType }}</span>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <div class="w-full">
+                <canvas [id]="'question' + i"></canvas>
+            </div>
+            <span class="text-sm text-center">{{ correct[i] }} answered correctly</span>
+        </div>
+        
+    </div>
+
+</div>

@@ -1,7 +1,7 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AuthUser, IUser, NewUser } from '../model/user.model';
+import { AuthUser, IUser, NewUser, User } from '../model/user.model';
 
 export type EntityResponseType = HttpResponse<IUser>;
 export type EntityArrayResponseType = HttpResponse<IUser[]>;
@@ -14,6 +14,7 @@ export type EntityArrayResponseType = HttpResponse<IUser[]>;
 export class UserService {
 
   protected resourceUrl = "http://localhost:8082/user/api/v1/auth";
+  protected userUrl = "http://localhost:8082/user-auth/api/v1/user";
 
   constructor(protected http: HttpClient) { }
 
@@ -23,6 +24,14 @@ export class UserService {
 
   authenticate(user: AuthUser): Observable<HttpResponse<{access_token: string, refresh_token: string, role: string}>> {
     return this.http.post<any>(`${this.resourceUrl}/authenticate`, user, { observe: 'response' });
+  }
+
+  getUserByIds(ids: number[]): Observable<HttpResponse<User[]>> {
+    return this.http.get<User[]>(`${this.userUrl}/byIds`, { params: {ids}, observe: 'response' });
+  }
+
+  getUser(): Observable<HttpResponse<User>> {
+    return this.http.get<User>(`${this.userUrl}/user`, { observe: 'response' });
   }
 
   setToken(jwtToken: string) {

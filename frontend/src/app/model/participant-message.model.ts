@@ -1,10 +1,15 @@
 import { State } from "./quiz-session.model";
 
 export interface ParticipantMessage {
-    answer: number | undefined;
+    answer: Answer | undefined;
     participant: string;
     quizSessionId: number;
     type: MessageType;
+}
+
+export interface Answer {
+    questionType: String;
+    answer: number[];
 }
 
 export enum MessageType {

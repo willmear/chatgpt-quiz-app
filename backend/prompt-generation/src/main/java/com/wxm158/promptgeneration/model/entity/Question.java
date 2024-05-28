@@ -30,4 +30,6 @@ public class Question {
     private List<String> topics;
     private LocalDateTime generatedAt = LocalDateTime.now();
     private String questionType;
+    private float difficulty;
+    private Integer totalAnswers;
 }

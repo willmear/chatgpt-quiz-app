@@ -23,4 +23,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 //    List<Question> findByTopicsInOrderByGeneratedAtDesc(Collection<List<String>> topics, Pageable pageable);
 
 //    List<Question> findByTopicsContainingOrderByGeneratedAtDesc(String topic, Pageable pageable);
+
+    List<Question> findAllByIdIn(Collection<Long> id);
 }

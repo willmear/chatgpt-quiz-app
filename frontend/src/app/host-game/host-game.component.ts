@@ -4,6 +4,7 @@ import { PlayQuizService } from '../service/play-quiz.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, interval, take } from 'rxjs';
 import { PlayerService } from '../service/player.service';
+import { CreateQuizService } from '../service/create-quiz.service';
 
 
 @Component({
@@ -23,8 +24,9 @@ export class HostGameComponent implements OnInit {
 
   countdown = 0;
   participants: Participant[] = [];
+  test: string[] = ["player 1", "player 2", "player 3", "player 4"];
 
-  constructor(private playService: PlayQuizService, private route: ActivatedRoute, private router: Router, private playerService: PlayerService) {
+  constructor(private playService: PlayQuizService, private route: ActivatedRoute, private router: Router, private playerService: PlayerService, private quizService: CreateQuizService) {
     this.quizSessionId = Number(this.route.snapshot.queryParamMap.get('id')) ?? '';
     this.getQuiz(this.quizSessionId);
     playerService.initializeWebSocketConnectionAnswers();
@@ -98,6 +100,7 @@ export class HostGameComponent implements OnInit {
           break;
         case State.FINISHED:
           this.watchStateUnsubscribe();
+          this.updateLastPlayed();
           console.log("finished from switch");
           break;
 
@@ -105,11 +108,23 @@ export class HostGameComponent implements OnInit {
           console.log("Unexpected state:", newState);
 
       }
-    })
+    });
   }
 
   ngOnDestroy() {
     this.gameStateSubscription.unsubscribe();
+    this.countdownSubscription.unsubscribe();
+  }
+
+  updateLastPlayed() {
+    this.quizService.updateLastPlayed(this.quizSession.quizCoreId).subscribe({
+      next: data => {
+        
+      },
+      error: error => {
+        console.log(error);
+      }
+    });
   }
   
 

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CreateQuizService } from '../service/create-quiz.service';
 import { Question } from '../model/question.model';
+import { UserService } from '../service/user.servce';
 
 @Component({
   selector: 'app-navbar',
@@ -11,15 +12,25 @@ import { Question } from '../model/question.model';
 export class NavbarComponent {
 
   isDropdownOpen: boolean = false;
-  options: string[] = ["Blank Quiz", "Create From Question Bank"]
+  isUserDropdownOpen: boolean = false;
+  userOptions: string[] = ["Logout"]
+  options: string[] = ["Blank Quiz", "Create From Question Bank"];
+  role;
 
-  constructor(private router: Router, private createQuizService: CreateQuizService) {}
+  constructor(private router: Router, private createQuizService: CreateQuizService, private userService: UserService) {
+    this.role = userService.getRole();
+  }
 
   toggleDropdown(): void {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
   closeDropdown(): void {
     this.isDropdownOpen = false;
+    this.isUserDropdownOpen = false;
+  }
+
+  toggleUserDropdown(): void {
+    this.isUserDropdownOpen = !this.isUserDropdownOpen;
   }
 
 
@@ -32,7 +43,7 @@ export class NavbarComponent {
       this.createQuizService.createQuiz(questions).subscribe({
         next: data => {
           const quizId = data.body.id;
-          this.router.navigate(['/design-quiz', quizId]);
+          this.router.navigate(['/design', quizId]);
         },
         error: error => {
           console.log(error);
@@ -40,10 +51,13 @@ export class NavbarComponent {
       });
     } else if (option===this.options[1]) {
       this.router.navigate(['/question-bank']);
+    }   
+  }
+
+  userNavigate(option: string) {
+    if (option === this.userOptions[0]) {
+      this.userService.clear();
+      this.router.navigate(['']);
     }
-
-    
-
-    
   }
 }

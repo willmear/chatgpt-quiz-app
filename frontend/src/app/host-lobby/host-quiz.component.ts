@@ -57,7 +57,6 @@ export class HostQuizComponent implements OnInit {
 
     this.playService.getQuizSession(Number(quizSessionId)).subscribe({
       next: data => {
-        console.log(data);
         this.quizSession = data.body;
       },
       error: error => {
@@ -71,7 +70,6 @@ export class HostQuizComponent implements OnInit {
     
     this.createQuizService.createQuizSession(Number(quizId)).subscribe({
       next: data => {
-        console.log(data);
         this.quizSessionId = data.id
         console.log(this.quizSessionId)
         this.quizSession = data;

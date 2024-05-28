@@ -1,39 +1,59 @@
+<nav class="h-16 items-center bg-gray-50 border-b flex inline-flex z-50 top-0 w-full justify-between">
+    <div class="ml-2 flex gap-4 items-center">
+        <img src="../../assets/images/Logo.png" alt="logo">
+        <button routerLink="create" class="text-white bg-teal-800 hover:bg-blue-900 font-medium rounded text-sm w-auto px-6 py-3 text-center">
+            Question Generator
+        </button> 
+        <button (click)="classes()" class="text-white bg-teal-800 hover:bg-blue-900 font-medium rounded text-sm w-auto px-6 py-3 text-center">
+            Classes
+        </button> 
+    </div>
+    <div class="mr-2 flex gap-4 items-center">
+        <button routerLink="join" class="text-white bg-teal-800 hover:bg-blue-900 font-medium rounded text-sm w-auto px-6 py-3 text-center">
+            Play
+        </button>        
+        <button *ngIf="!isLoggedIn()" routerLink="login" class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded text-sm w-auto px-6 py-3 text-center">
+            Login
+        </button>
+        <button *ngIf="isLoggedIn()" (click)="logout()" class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded text-sm w-auto px-6 py-3 text-center">
+            Log out
+        </button>
+        <button routerLink="register" class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded text-sm w-auto px-6 py-3 text-center">
+            Sign up
+        </button>
+    </div>
+</nav>
 
-<div class="container mx-auto">
-    <div class="row">
-        <div class="col-lg-12 text-center">
-            <a href="/create">create quiz</a>
-        </div>
+<div class="flex justify-center pt-16">
+    <span class="text-4xl geranium text-slate-850">Unleash your curiosity with <span class="text-teal-800">AI-powered</span> quizzes!</span>
+</div>
+
+<div class="gap-5 mx-auto w-3/5 grid grid-cols-2 pt-16">
+
+    <div class="bg-white py-2 px-8 shadow-md rounded-md flex flex-col">
+        <span class="text-xl font-semibold pb-3 text-center">AI Powered Question Generation</span>
+        <p class="font-medium">
+            Just select relevant keywords (or create your own) to create hundreds of AI-generated questions of various question types such as:
+        </p>
+        <ul class="list-disc list-inside font-medium">
+            <li>Multiple Choice</li>
+            <li>Multiple Answers</li>
+            <li>True or False</li>
+            <li>Ordering</li>
+            <li>Drag and Drop</li>
+            <li>Fill in the Blanks</li>
+        </ul>
+        <p class="font-medium">Feel free to save your AI-generated questions in your question bank to use time and time again!</p>
     </div>
-    <div class="row">
-        <div class="col-lg-12 text-center">
-            <a href="/register">register</a>
-        </div>
+
+    <div class="bg-white py-2 px-8 shadow-md rounded-md flex flex-col">
+        <span class="text-xl font-semibold pb-3 text-center">Classrooms</span>
+        <p class="font-medium">
+            Educators have the flexibility to create as many classrooms as you see fit to group students according to their learning needs and preferences.
+            <br> Set your classrooms AI-powered assignments taking advantage of all our question types. 
+            <br> Our comprehensive reporting system offers detailed insights into individual and class-wide performance.
+            <br> Alternatively, host and play our realtime quizzes, live in the classroom!
+        </p>
     </div>
-    <div class="row">
-        <div class="col-lg-12 text-center">
-            <a href="/login">login</a>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12 text-center">
-            <button (click)="logout()">logout</button>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12 text-center">
-            <a href="/question-bank">question bank</a>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12 text-center">
-            <a href="/library">library</a>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12 text-center">
-            <a href="/join">join</a>
-        </div>
-    </div>
-    
+
 </div>

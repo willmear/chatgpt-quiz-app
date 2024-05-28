@@ -11,6 +11,7 @@ import com.google.gson.GsonBuilder;
 import com.wxm158.promptgeneration.OpenAI.OpenAiEmbeddingModel;
 import com.wxm158.promptgeneration.mapper.QuestionMapper;
 import com.wxm158.promptgeneration.model.dto.ChatRequest;
+import com.wxm158.promptgeneration.model.dto.Difficulty;
 import com.wxm158.promptgeneration.model.dto.QuestionGeneration;
 import com.wxm158.promptgeneration.model.dto.TopicResponse;
 import com.wxm158.promptgeneration.model.entity.Question;
@@ -69,15 +70,13 @@ public class EmbeddingService {
     private String API_KEY;
     @Value("${WEAVIATE_API_KEY}")
     private String WEAVIATE_API_KEY;
-    private static final String DEFAULT_NAMESPACE = "default"; // do not change, will break backward compatibility!
-    private static final String DEFAULT_METADATA_TEXT_KEY = "text_segment"; // do not change, will break backward compatibility!
     String baseUrl = "https://api.openai.com/v1";
-    String modelName = "text-embedding-ada-002";  // You can change this if needed
-    Duration timeout = Duration.ofSeconds(120);  // You can change this if needed
-    Integer maxRetries = 3;  // You can change this if needed
-    Proxy proxy = null;  // You can provide a proxy if needed
-    Boolean logRequests = true;  // Set to true if you want to log requests
-    Boolean logResponses = true;  // Set to true if you want to log responses
+    String modelName = "text-embedding-ada-002";
+    Duration timeout = Duration.ofSeconds(120);
+    Integer maxRetries = 3;
+    Proxy proxy = null;
+    Boolean logRequests = true;
+    Boolean logResponses = true;
     private final QuestionRepository questionRepository;
     private final QuestionMapper questionMapper;
 
@@ -99,7 +98,7 @@ public class EmbeddingService {
         return WeaviateEmbeddingStore.builder()
                 .apiKey(WEAVIATE_API_KEY)
                 .scheme("https")
-                .host("question-gen-wwxbinax.weaviate.network")
+                .host("question-generation-8jhkh9kk.weaviate.network")
                 .avoidDups(true)
                 .consistencyLevel("ALL")
                 .build();
@@ -109,7 +108,7 @@ public class EmbeddingService {
         return OpenAiChatModel.builder()
                 .apiKey(API_KEY)
                 // old key 8T6eTtmk
-                .modelName("ft:gpt-3.5-turbo-1106:personal::8VzKieWR")
+                .modelName("ft:gpt-3.5-turbo-1106:personal::9AciZQP9")
                 .timeout(timeout)
                 .temperature(0.3)
                 .build();
@@ -162,6 +161,9 @@ public class EmbeddingService {
         for (QuestionGeneration question : questions) {
             question.setId((long) questions.indexOf(question));
             question.setQuestionType(questionType);
+            if(question.getQuestionType().equals("True/False")) {
+                question.setChoices(Arrays.asList("True", "False"));
+            }
         }
 
         return questions;
@@ -186,4 +188,44 @@ public class EmbeddingService {
 //        return questionMapper.mapQuestionsToQuestionGenerations(questionList);
     }
 
+    public ResponseEntity<Difficulty> updateDifficulty(Difficulty difficulty) {
+
+//        List<Question> questionList = questionRepository.findAllByIdIn(difficulty.getQuestionIds());
+        List<Question> questionList = new ArrayList<>();
+
+        for (Long id : difficulty.getQuestionIds()) {
+            if (id == null) {
+                questionList.add(null);
+                continue;
+            } else {
+                questionList.add(questionRepository.findById(id).orElse(null));
+            }
+
+        }
+
+        System.out.println(questionList);
+
+        for (int i = 0; i < questionList.size(); i++) {
+
+            if (questionList.get(i) == null) {
+                continue;
+            }
+
+            Question question = questionList.get(i);
+            Boolean answeredCorrectly = difficulty.getAnswers().get(i);
+
+            int totalAttempts = question.getTotalAnswers() != null ? question.getTotalAnswers() : 0;
+            question.setTotalAnswers(totalAttempts + 1);
+
+            float currentDifficulty = question.getDifficulty();
+            float updatedDifficulty = (currentDifficulty * totalAttempts + (answeredCorrectly ? 1 : 0)) / (totalAttempts + 1);
+            question.setDifficulty(updatedDifficulty);
+
+            questionRepository.save(question);
+
+        }
+
+        return ResponseEntity.ok(difficulty);
+
+    }
 }

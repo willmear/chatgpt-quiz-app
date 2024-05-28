@@ -1,0 +1,54 @@
+<app-sidebar></app-sidebar>
+<app-navbar></app-navbar>
+
+<div *ngIf="openJoinClass" class="fixed z-10 left-0 top-0 bg-black bg-opacity-50 w-screen h-screen flex justify-center items-center">
+    <div class="bg-white rounded shadow-md m-2 w-42 h-48 overflow-y-auto flex flex-col justify-center items-center gap-4">
+        <span class="text-xl font-medium">Join a new Class</span>
+        <div class="w-5/6 pb-2">
+            <label class="font-medium" for="joinCode">Join Code</label>
+            <input [(ngModel)]="joinCode" class="w-full border border-gray-300 rounded-md text-xl px-3 py-1 font-medium" type="text" name="joinCode" placeholder="Join Code">
+        </div>
+        <div class="flex gap-2 w-3/4 h-1/4">
+            <button (click)="joinClass()" class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded text-md w-full text-center">
+                Join
+            </button>
+            <button (click)="toggleJoinClass()" class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded text-md w-full text-center">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="ml-20 pt-32 h-screen bg-gray-100">
+    
+    <div class="w-[80%] mx-auto flex justify-between mb-4">
+        <div class="relative inline-flex items-center">
+            <div class="absolute ps-3 opacity-25 pr-2">
+                <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.--><path fill="#000000" d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
+            </div>
+            <input type="text" name="search" class="p-2 ps-10 border border-gray-300 rounded-md" placeholder="Search">
+        </div>
+        <div>
+            <button (click)="toggleJoinClass()" class="text-white bg-teal-800 hover:bg-teal-900 font-medium rounded text-sm w-full px-6 py-3 text-center">
+                Join
+            </button>
+        </div>
+
+    </div>
+    
+    <div *ngIf="classes === []" class="w-[80%] h-[90%] mx-auto bg-white rounded-md shadow-md"></div>
+    <div *ngIf="classes != []" class="w-[80%] mx-auto gap-4 grid grid-cols-2">
+        <div *ngFor="let class of classes; let i = index" class="bg-white rounded-md shadow-md flex justify-between items-center">
+            <span (click)="navClass(class)" class="text-xl w-full p-8 pl-4 hover:cursor-pointer">{{class.name}}</span> 
+            <button (click)="toggleEditDropdown(i)" class="mr-4 relative">
+                <svg xmlns="http://www.w3.org/2000/svg" height="16" width="4" viewBox="0 0 128 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z"/></svg>
+                <div *ngIf="dropdownStates[i]" class="absolute divide-y divide-gray-100 right-0 z-10 mt-2 w-64 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+                    <div class="py-1" role="none" *ngFor="let option of options">
+                        <button (click)="onOptionSelect(option, i)" class="text-gray-700 block px-4 py-2 text-md border w-full text-left" role="menuitem" tabindex="-1" id="menu-item-0">{{option}}</button>
+                    </div>
+                </div>
+            </button>
+        </div>
+    </div>
+
+</div>

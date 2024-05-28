@@ -22,4 +22,6 @@ public interface QuizSessionRepository extends JpaRepository<QuizSession, Long> 
 
 
     QuizSession findByIdAndUserId(Long id, Long userId);
+
+    Integer countAllByQuizCoreId(Long quizCoreId);
 }

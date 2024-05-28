@@ -11,11 +11,10 @@ import { Router } from '@angular/router';
 export class LibraryComponent implements OnInit {
 
   rotationDegrees: number = 270;
-  filter: string = 'Recent';
-  // quiz: Quiz[] = [{id:1, userId:1, questions:[], title:'', isDraft:false, createdAt:Date.now as unknown as Date, lastPlayed:Date.now as unknown as Date}];
   quiz: Quiz[] = [];
   draft: Quiz[] = [];
-  selectedTab: string = 'recent';
+  recent: boolean = true;
+  drafts: boolean = false;
 
   constructor(private createQuizService: CreateQuizService, private router: Router) {}
 
@@ -51,10 +50,6 @@ export class LibraryComponent implements OnInit {
     element?.classList.toggle('rotate-90');
   }
 
-  selectTab(tab: string): void {
-    this.selectedTab = tab;
-  }
-
   showModal = false;
   toggleModal(){
     this.showModal = !this.showModal;
@@ -71,12 +66,46 @@ export class LibraryComponent implements OnInit {
   deleteQuiz(id: number) {
     this.createQuizService.deleteQuiz(id).subscribe({
       next: data => {
-        this.getQuiz()
+        if (this.recent) {
+          this.getQuiz();
+        } else {
+          this.getDraft();
+        }
       },
       error: error => {
         console.log(error);
       }
     })
+  }
+
+  selectTab(tab: string) {
+    if (tab === 'recent') {
+      this.recent=true;
+      this.drafts=false;
+    } else if (tab === 'draft') {
+      this.drafts=true;
+      this.recent=false;
+    }
+  }
+
+  createAssignment(id: number): void {
+    console.log(id);
+    this.router.navigate(['homework'], { queryParams: { quizId: id } });
+  }
+
+  convertToDate(date: Date): string {
+
+    const date2 = new Date(date);
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'long', // full name of the day of the week
+      year: 'numeric', // full numeric representation of the year
+      month: 'long', // full name of the month
+      day: 'numeric' // numeric day of the month
+    };
+    
+    const writtenDate = date2.toLocaleDateString('en-GB', options);
+    
+    return writtenDate;
   }
 
 }

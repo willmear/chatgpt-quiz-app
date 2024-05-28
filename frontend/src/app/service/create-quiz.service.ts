@@ -21,8 +21,12 @@ export class CreateQuizService {
     return this.http.post<Question>(`${this.url}/create`, questions, {observe: 'response'});
   }
 
-  getQuiz(quizId: string): Observable<HttpResponse<any>> {
+  getQuiz(quizId: string): Observable<HttpResponse<Quiz>> {
     return this.http.get<Quiz>(`${this.url}/quiz/${quizId}`, {observe: 'response'});
+  }
+
+  getQuizStudent(quizId: string): Observable<HttpResponse<Quiz>> {
+    return this.http.get<Quiz>(`${this.url}/student/quiz/${quizId}`, {observe: 'response'});
   }
 
   publishQuiz(quiz: Quiz, quizId: string): Observable<HttpResponse<any>> {
@@ -47,6 +51,10 @@ export class CreateQuizService {
 
   deleteQuiz(quizId: number): Observable<any> {
     return this.http.delete<number>(`${this.url}/quiz/delete/${quizId}`, { observe: 'response' });
+  }
+
+  updateLastPlayed(quizId: number): Observable<HttpResponse<Quiz>> {
+    return this.http.put<Quiz>(`${this.url}/last-played`, quizId, { observe: 'response' });
   }
 
   

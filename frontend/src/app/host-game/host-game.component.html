@@ -1,43 +1,58 @@
-<div class="h-screen">
+<div class="h-screen bg-teal-700">
 
     <!-- question and countdown -->
-    <div *ngIf="quizSession?.state === state.PRE_QUESTION">
-        <div class="flex h-screen">
-            <div>
-                {{currentQuestion.question}}
-            </div>
-            <div>
-                {{countdown}}
-            </div>
+    <div class="h-[80%] flex flex-col justify-center items-center gap-20" *ngIf="quizSession?.state === state.PRE_QUESTION">
+        <div class="text-4xl">
+            {{currentQuestion.question}}
         </div>
-    </div>
-
-    <!-- number of responses left and countdown -->
-    <div *ngIf="quizSession?.state === state.QUESTION">
-        <div *ngFor="let choice of currentQuestion.choices">
-            {{choice}}
-        </div>
-        <div>
+        <div class="text-2xl">
             {{countdown}}
         </div>
     </div>
 
-    <div *ngIf="quizSession?.state === state.POST_QUESTION">
+    <!-- number of responses left and countdown -->
+    <div class="h-[80%] flex flex-col justify-center items-center gap-20" *ngIf="quizSession?.state === state.QUESTION && (currentQuestion.questionType != 'Drag and Drop' && currentQuestion.questionType != 'Fill The Blanks')">
         <div>
+            <div class="text-4xl" *ngFor="let choice of currentQuestion.choices">
+                {{choice}}
+            </div>
+        </div>
+        <div class="text-2xl">
+            {{countdown}}
+        </div>
+    </div>
+
+    <div class="h-[80%] flex flex-col justify-center items-center gap-20" *ngIf="quizSession?.state === state.QUESTION && (currentQuestion.questionType === 'Drag and Drop' || currentQuestion.questionType === 'Fill The Blanks')">
+        <div class="text-4xl">
+            {{currentQuestion.question}}
+        </div>
+        <div class="text-2xl">
+            {{countdown}}
+        </div>
+    </div>
+
+    <div class="h-[100%] flex flex-col justify-center items-center" *ngIf="quizSession?.state === state.POST_QUESTION">
+        <div class="text-2xl">
             Calculating Scores...
         </div>
     </div>
 
-    <div *ngIf="quizSession?.state === state.LEADERBOARD">
-        <div *ngFor="let participant of participants">
-            <div>{{participant.alias}}: {{participant.points}}</div>
-        </div>
+    <div class="pt-16" *ngIf="quizSession?.state === state.LEADERBOARD">
+        <ul class="w-[40%] mx-auto bg-white p-4 rounded-sm divide-y divide-gray-300">
+            <span class="flex justify-center text-2xl font-semibold pb-4">Leaderboard</span>
+            <li class="flex justify-between text-xl p-2" *ngFor="let participant of participants">
+                <div>{{participant.alias}}</div>
+                <div>{{participant.points}}</div>
+            </li>
+        </ul>
+        
+        
         <!-- MIGHT NOT BE PRE QUESTION AND ACTUALLY FINISH UPDATE THIS -->
-        <button (click)="updateState(state.PRE_QUESTION)">Next</button>
+        <button class="absolute right-2 top-2 text-lg font-semibold bg-white py-2 px-4 rounded-sm shadow-md hover:bg-gray-200" (click)="updateState(state.PRE_QUESTION)">Next</button>
     </div>
 
-    <div *ngIf="quizSession?.state === state.FINISHED">
-        <div>
+    <div class="h-[100%] flex flex-col justify-center items-center" *ngIf="quizSession?.state === state.FINISHED">
+        <div class="text-2xl">
             Game over
         </div>
     </div>

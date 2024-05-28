@@ -34,7 +34,10 @@ public class UserService {
     }
 
     public List<UserResponse> getUsersByIds(List<Long> ids) {
-        List<User> users = userRepository.findAllById(ids);
+        List<User> users = new ArrayList<>();
+        for (Long id : ids) {
+            users.add(userRepository.findById(id).orElse(null));
+        }
 
         return users.stream()
                 .map(user -> new UserResponse(user.getId(), user.getFirstname(), user.getLastname()))
@@ -62,5 +65,14 @@ public class UserService {
         }
 
         return ResponseEntity.noContent().build();
+    }
+
+    public UserResponse getUser(Long userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        return UserResponse.builder()
+                .id(user.getId())
+                .firstname(user.getFirstname())
+                .lastname(user.getLastname())
+                .build();
     }
 }

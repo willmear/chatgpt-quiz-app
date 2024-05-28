@@ -19,6 +19,7 @@ public class QuestionMapper {
 
     private Question mapQuestionGenerationToQuestion(QuestionRequest questionRequest) {
         return Question.builder()
+                .questionBankId(questionRequest.getId())
                 .question(questionRequest.getQuestion())
                 .choices(questionRequest.getChoices())
                 .answer(questionRequest.getAnswer())

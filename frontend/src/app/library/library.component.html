@@ -1,7 +1,7 @@
 <app-navbar></app-navbar>
 <app-sidebar></app-sidebar>
 
-<div class="h-screen ml-20 pt-16 bg-gray-100">
+<div class="ml-20 pt-16 bg-gray-100 mb-5">
 
     <aside id="default-sidebar" class="left-20 top-0 fixed z-40 w-60 mt-16 h-full border bg-gray-50" aria-label="Sidebar">
       <div class="h-full px-1 py-4 overflow-y-auto flex flex-col gap-3">
@@ -24,8 +24,8 @@
       
     <div class="h-full ml-60 pt-4">
         <div class="flex ml-12 gap-2">
-            <button type="button" class="px-2 py-1 border-b transition duration-300 focus:border-b-2 focus:border-black">Recent</button>
-            <button type="button" class="px-2 py-1 border-b transition duration-300 focus:border-b-2 focus:border-black">Drafts</button>
+            <button type="button" (click)="selectTab('recent')" [ngClass]="{'border-b-2': recent, 'border-black': recent}" class="px-2 py-1 transition border-b duration-300">Recent</button>
+            <button type="button" (click)="selectTab('draft')" [ngClass]="{'border-b-2': drafts, 'border-black': drafts}" class="px-2 py-1 border-b transition duration-300">Drafts</button>
             <div class="relative inline-flex items-center pl-2 px-4 py-1">
                 <div class="absolute ps-3 opacity-25 pr-2">
                     <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.--><path fill="#000000" d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
@@ -34,20 +34,40 @@
             </div>
         </div>
 
-        <div class="mx-12 mt-8 w-auto flex flex-col gap-2">
+        <div *ngIf="recent===true" class="mx-12 mt-8 w-auto flex flex-col gap-2">
 
             <div class="border h-32 flex flex-col justify-between shadow-md rounded bg-gray-50" *ngFor="let quiz of quiz">
                 <div class="flex justify-between px-2 py-2">
                     <span class="text-4xl">{{quiz.title}}</span>
-                    <span>Author</span>
                 </div>
-                <span class="px-2">Created: {{quiz.createdAt}}</span>
+                <span class="px-2">Created: {{convertToDate(quiz.createdAt)}}</span>
                 <div class="flex justify-between px-2 pb-2">
-                    <span>Last Played: {{quiz.lastPlayed}}</span>
+                    <span *ngIf="quiz.lastPlayed">Last Played: {{convertToDate(quiz.lastPlayed)}}</span>
+                    <span *ngIf="!quiz.lastPlayed">Last Played: Never!</span>
                     <div class="flex gap-2 items-center">
                         <svg class="hover:cursor-pointer" (click)="editQuiz(quiz.id)" xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z"/></svg>
-                        <button (click)="hostQuiz(quiz.id)" type="button" class="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded text-sm w-full sm:w-auto px-3 py-2 text-center">Play</button>
-                        <button type="button" class="text-white bg-gray-500 hover:bg-gray-600 font-medium rounded text-sm w-full sm:w-auto px-3 py-2 text-center">Assign</button>
+                        <button (click)="hostQuiz(quiz.id)" type="button" class="text-white bg-teal-800 hover:bg-teal-900 font-medium rounded text-sm w-full sm:w-auto px-3 py-2 text-center">Play</button>
+                        <button (click)="createAssignment(quiz.id)" type="button" class="text-white bg-gray-500 hover:bg-gray-600 font-medium rounded text-sm w-full sm:w-auto px-3 py-2 text-center">Assign</button>
+                        <button (click)="deleteQuiz(quiz.id)" class="bg-red-500 hover:bg-red-700 text-white font-medium rounded text-sm w-full sm:w-auto px-3 py-2 text-center">Delete</button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <div *ngIf="recent===false" class="mx-12 mt-8 w-auto flex flex-col gap-2">
+
+            <div class="border h-32 flex flex-col justify-between shadow-md rounded bg-gray-50" *ngFor="let quiz of draft">
+                <div class="flex justify-between px-2 py-2">
+                    <span class="text-4xl">{{quiz.title}}</span>
+                </div>
+                <span class="px-2">Created: {{convertToDate(quiz.createdAt)}}</span>
+                <div class="flex justify-between px-2 pb-2">
+                    <span *ngIf="quiz.lastPlayed">Last Played: {{convertToDate(quiz.lastPlayed)}}</span>
+                    <span *ngIf="!quiz.lastPlayed">Last Played: Never!</span>
+                    <div class="flex gap-2 items-center">
+                        <svg class="hover:cursor-pointer" (click)="editQuiz(quiz.id)" xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z"/></svg>
+                        <button (click)="hostQuiz(quiz.id)" type="button" class="text-white bg-teal-800 hover:bg-teal-900 font-medium rounded text-sm w-full sm:w-auto px-3 py-2 text-center">Play</button>
+                        <button (click)="createAssignment(quiz.id)" type="button" class="text-white bg-gray-500 hover:bg-gray-600 font-medium rounded text-sm w-full sm:w-auto px-3 py-2 text-center">Assign</button>
                         <button (click)="deleteQuiz(quiz.id)" class="bg-red-500 hover:bg-red-700 text-white font-medium rounded text-sm w-full sm:w-auto px-3 py-2 text-center">Delete</button>
                     </div>
                 </div>

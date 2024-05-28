@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { ChatRequest } from '../model/chat-request.model';
 import { Observable } from 'rxjs';
 import { ChatResponse } from '../model/chat-response.model';
-import { Question } from '../model/question.model';
+import { Difficulty, Question } from '../model/question.model';
+import { AssignmentCompletion } from '../model/class.model';
 
 export type EntityArrayResponseType = HttpResponse<Question[]>;
 
@@ -26,5 +27,9 @@ export class OpenaiService {
 
   getAllQuestions(): Observable<EntityArrayResponseType> {
     return this.http.get<Question[]>(`${this.url}/questions`, { observe: 'response' });
+  }
+
+  updateQuestionDifficulty(completion: Difficulty): Observable<HttpResponse<Difficulty>> {
+    return this.http.post<Difficulty>(`${this.url}/questions/difficulty`, completion, { observe: 'response' });
   }
 }

@@ -22,6 +22,7 @@ export class QuestionBankComponent implements OnInit {
 
 
   constructor(private openaiService: OpenaiService, private router: Router, private createQuizService: CreateQuizService) {
+
     this.openaiService.getAllQuestions().subscribe({
       next:data => {
         console.log(data);
@@ -78,6 +79,10 @@ export class QuestionBankComponent implements OnInit {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
 
+  closeDropdown() {
+    this.isDropdownOpen = false;
+  }
+
   updateSelectedOption(option: string) {
     this.category=option;
     this.toggleDropdown();
@@ -93,7 +98,25 @@ export class QuestionBankComponent implements OnInit {
       error: error => {
         console.log(error);
       }
-    })
+    });
+  }
+
+  difficulty(percent: number | undefined): string {
+    if (percent) {
+      if (percent === 0) {
+        return "N/A";
+      } else if (percent >= 0.7) {
+        return "Easy";
+      } else if (percent >= 0.5) {
+        return "Medium";
+      } else {
+        return "Hard";
+      }
+    } else {
+      return "N/A";
+    }
+    
+
   }
 
   deleteQuestions() {

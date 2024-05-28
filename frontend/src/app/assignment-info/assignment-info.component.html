@@ -1,0 +1,86 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+<app-report-banner></app-report-banner>
+
+<div class="mt-12 ml-20">
+    <div class="w-[80%] mx-auto flex gap-10">
+        <div class="shadow-md w-1/4 bg-gray-50 rounded-md">
+            <div class="pl-6 flex mb-2 rounded-t-md bg-white text-lg border-b">
+                <span class="font-semibold p-2">
+                    Overview
+                </span>
+            </div>
+            <div class="bg-gray-50 flex flex-col px-5 pb-3">
+                <span class="font-semibold text-gray-700">
+                    Assignments Submitted: {{ complete + incomplete }}
+                </span>
+                <span class="font-semibold text-gray-700">
+                    Average Score: {{ averageScore }}/{{ assignment?.questions?.length }}
+                </span>
+                <span class="font-semibold text-gray-700">
+                    Highest Score: {{ highest }}/{{ assignment?.questions?.length }}
+                </span>
+                <span class="font-semibold text-gray-700">
+                    Lowest Score: {{ lowest }}/{{ assignment?.questions?.length }}
+                </span>
+                <span class="font-semibold text-gray-700">
+                    Average Completion Time: {{ getAverageCompletionTime() }}
+                </span>
+                
+            </div>
+        </div>
+
+        <div class="shadow-md bg-gray-50 w-1/4 rounded-md">
+            <div class="pl-6 flex mb-2 bg-white rounded-t-md text-lg border-b">
+                <span class="font-semibold p-2">
+                    Didn't Finish
+                </span>
+            </div>
+            <div *ngIf="studentsDnf.length > 0" class="bg-gray-50 flex flex-col px-5 pb-3">
+                <div *ngFor="let member of studentsDnf" class="font-semibold text-gray-700">
+                    {{member.firstname}} {{ member.lastname }}
+                </div>
+            </div>
+            <div *ngIf="studentsDnf.length === 0" class="bg-gray-50 flex flex-col px-5 pb-3">
+                <div class="font-semibold text-gray-700">
+                    <span>Nothing to see here</span>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="shadow-md bg-gray-50 w-1/2 rounded-md">
+            <div class="pl-6 flex mb-2 bg-white rounded-t-md text-lg border-b">
+                <span class="font-semibold p-2">
+                    Difficult Questions
+                </span>
+            </div>
+            <div *ngIf="toughQuestions.length > 0" class="bg-gray-50 flex flex-col min-w-92 px-5 pb-3">
+                <div *ngFor="let question of toughQuestions" class="font-semibold text-gray-700">
+                    {{question.question}}
+                </div>
+                <button (click)="createQuiz()" class="text-white bg-teal-700 hover:bg-teal-800 font-medium rounded text-sm w-auto mt-2 px-6 py-3 text-center">Create Quiz</button>           
+            </div>
+            <div *ngIf="toughQuestions.length === 0" class="bg-gray-50 flex flex-col min-w-92 px-5 pb-3">
+                <div class="font-semibold text-gray-700">
+                    <span>Nothing to see here</span>
+                </div>                              
+            </div>
+        </div>
+
+        
+    </div>
+
+    <div  class="w-[80%] pt-6 mx-auto flex flex-col items-center">
+
+        <div>
+            <span class="text-lg font-semibold text-gray-700">Class Performance</span>
+        </div>
+
+        <div class="w-full">
+            <canvas id="scoreOverview">{{ scoreOverviewChart }}</canvas>
+        </div>
+    </div>
+    
+    
+</div>

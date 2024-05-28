@@ -1,0 +1,156 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+<app-report-banner></app-report-banner>
+
+<div *ngIf="viewStudent" class="fixed z-10 left-0 top-0 bg-black bg-opacity-50 w-screen h-screen flex justify-center items-center">
+    <div (click)="$event.stopPropagation();" class="bg-white ml-20 mt-20 rounded shadow-md m-2 w-[75%] h-[75%] overflow-y-auto">
+
+        <div class="flex flex-col gap-5">
+            <div class="p-4 gap-10 flex items-center border-b-2">
+                <svg height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M304 128a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM49.3 464H398.7c-8.9-63.3-63.3-112-129-112H178.3c-65.7 0-120.1 48.7-129 112zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3z"/></svg>
+                <span class="text-lg font-medium">{{students[selectedStudent].firstname}}</span>
+            </div>
+            <div class="flex justify-start items-center pt-5 px-16">
+                <div>
+                    <canvas id="pieChart">{{ pieChart }}</canvas>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-4xl font-medium">{{ getCorrectAnswersPercentage(selectedCompletion) }}%</span>
+                    <span class="text-2xl">Correct</span>                    
+                </div>
+            </div>
+            <div class="flow-root mx-5 max-h-full h-5/6">
+                <div class="grid grid-cols-12 gap-2 p-3 border bg-gray-100">
+                    <div class="col-span-3 flex">
+                        <p class="text-md font-medium text-gray-900 truncate">
+                            Question
+                        </p>
+                    </div>
+                    <div class="col-span-3 flex">
+                        <p class="text-md font-medium text-gray-900 truncate">
+                            Question Type
+                        </p>
+                    </div>
+                    <div class="col-span-3 flex">
+                        <p class="text-md font-medium text-gray-900 truncate">
+                            Answered
+                        </p>
+                    </div>
+                    <div class="col-span-3 flex gap-1 items-center">
+                        <p class="pr-2 text-md font-medium text-gray-900 truncate">
+                            Correct/ Incorrect
+                        </p>
+                    </div>
+                
+                </div>   
+                <ul role="list" class="divide-y border divide-gray-200">
+                    <li *ngFor="let question of selectedCompletion.assignment.questions; let i = index" class="py-4">
+                        <div class="grid grid-cols-12 px-3 gap-2">
+                            <div class="col-span-3 flex gap-2">
+                                <p class="text-sm font-medium text-gray-900 truncate">
+                                    {{question.question}}
+                                </p>
+                            </div>
+                            <div class="col-span-3 flex ">
+                                <p class="text-sm font-medium text-gray-900 truncate">
+                                    {{ question.questionType }}
+                                </p>
+                            </div>
+                            <div class="col-span-3 flex">
+                                <p *ngIf="selectedCompletion.answers[i] == undefined">Unanswered</p>
+                                <div *ngIf="selectedCompletion.answers[i] != undefined" class="text-sm font-medium text-gray-900 truncate">
+                                    {{ getAnswers(selectedCompletion.assignment.questions[i].choices, selectedCompletion.answers[i].answer) }}
+                                    <!-- {{ selectedCompletion.answers[i].answer }} -->
+                                </div>
+                            </div>
+                            <div class="col-span-3 flex gap-1 items-center">
+                                <p *ngIf="selectedCompletion.answers[i] == undefined">Unanswered</p>
+                                <p *ngIf="!selectedCompletion.answer[i] && selectedCompletion.answers[i] != undefined" class="pr-2 text-sm font-medium text-gray-900 truncate">
+                                    Incorrect
+                                </p>
+                                <p *ngIf="selectedCompletion.answer[i] && selectedCompletion.answers[i] != undefined" class="pr-2 text-sm font-medium text-gray-900 truncate">
+                                    Correct
+                                </p>
+                            </div>
+                        
+                        </div>         
+                    </li>
+                </ul>
+                
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="mt-12 ml-20 pb-5" (document:click)="closeViewStudent();">
+
+    <div class="w-3/4 mx-auto rounded bg-gray-50 border shadow">
+        <div class="flex border-b-2">
+            
+            <div class="relative inline-flex items-center pl-2 px-4 py-1">
+                <div class="absolute ps-3 opacity-25 pr-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.--><path fill="#000000" d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
+                </div>
+                <input type="text" name="search" class="p-1 ps-10 border rounded-md" placeholder="Search">
+            </div>
+        </div>
+        <div class="flow-root max-h-full h-5/6">
+            <div class="grid grid-cols-12 gap-2 p-3 border bg-gray-100">
+                <div class="col-span-3 flex">
+                    <p class="text-md font-medium text-gray-900 truncate">
+                        Name
+                    </p>
+                </div>
+                <div class="col-span-3 flex">
+                    <p class="text-md font-medium text-gray-900 truncate">
+                        Correct Answers
+                    </p>
+                </div>
+                <div class="col-span-3 flex">
+                    <p class="text-md font-medium text-gray-900 truncate">
+                        Final Score
+                    </p>
+                </div>
+                <div class="col-span-3 flex gap-1 items-center">
+                    <p class="pr-2 text-md font-medium text-gray-900 truncate">
+                        Completed?
+                    </p>
+                </div>
+            
+            </div>   
+            <ul role="list" class="divide-y divide-gray-200">
+                <li *ngFor="let completion of assignmentCompletions; let i = index" class="py-4">
+                    <div (click)="toggleViewStudent(i, completion); $event.stopPropagation();" class="grid grid-cols-12 px-3 gap-2 hover:cursor-pointer">
+                        <div *ngIf="students.length > i" class="col-span-3 flex gap-2">
+                            <p class="text-sm font-medium text-gray-900 truncate">
+                                {{students[i].firstname}}
+                            </p>
+                        </div>
+                        <div class="col-span-3 flex ">
+                            <p class="text-sm font-medium text-gray-900 truncate">
+                                {{ getCorrectAnswersPercentage(completion) }}%
+                            </p>
+                        </div>
+                        <div class="col-span-3 flex">
+                            <p class="text-sm font-medium text-gray-900 truncate">
+                                {{ getCorrectAnswers(completion) }} / {{ assignment?.questions?.length }}
+                            </p>
+                        </div>
+                        <div class="col-span-3 flex gap-1 items-center">
+                            <p *ngIf="completion.timeOver || completion.exitedBeforeFinished" class="pr-2 text-sm font-medium text-gray-900 truncate">
+                                No
+                            </p>
+                            <p *ngIf="!completion.timeOver && !completion.exitedBeforeFinished" class="pr-2 text-sm font-medium text-gray-900 truncate">
+                                Yes
+                            </p>
+                        </div>
+                    
+                    </div>         
+                </li>
+            </ul>
+            
+        </div>
+    </div>
+
+</div>

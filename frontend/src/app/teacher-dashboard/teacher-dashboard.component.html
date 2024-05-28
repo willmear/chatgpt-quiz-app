@@ -1,0 +1,199 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+
+<div class="pt-24 ml-20">
+
+    
+    <div class="w-[90%] mx-auto grid mt-8 grid-cols-3 gap-4 mb-5">
+
+        <div class="flex flex-col gap-3">
+            <div class="flex flex-col bg-white rounded-md shadow-md p-3">
+                <span class="font-semibold text-gray-800">Your Classes: </span>
+                <div *ngFor="let class of classes.slice(0,5)" class="pt-4">
+                    <div [routerLink]="['/class', class.id]" class="bg-white shadow-md border-b rounded-md p-3 cursor-pointer">
+                        <span>{{ class.name }}</span>
+                    </div>
+                </div>
+                <span [routerLink]="['/class']" class="pt-3 text-center underline text-blue-700 cursor-pointer">See all...</span>
+            </div>
+
+            <div class="flex flex-col bg-white rounded-md shadow-md p-3">
+                <span class="font-semibold text-gray-800 pb-3">Recent Performances (Assignment Average / Class): </span>
+
+                <div>
+                    <div *ngFor="let allCompletions of allCompletions; let i = index" class="pb-3 flex flex-col gap-3">
+                        <div *ngIf="allCompletions.length > 0">
+                            <span class="font-semibold text-gray-700">{{ allCompletions[0].assignment.classroom.name }}</span>
+                            <canvas [id]="'progressChart' + i"></canvas>  
+                        </div>
+                    </div>
+                                
+                </div>
+                
+            </div>     
+            
+
+        </div>
+
+        <div>
+
+            <div class="flex flex-col gap-3 justify-center">
+
+                <span *ngIf="user" class="text-3xl font-semibold text-center">Good {{timeOfDay()}}, {{ user.firstname }}</span>
+                <span *ngIf="!user">Good {{timeOfDay()}}</span>
+                
+                <div class="flex flex-col gap-3 items-center bg-white rounded-md shadow-md p-3">
+
+                    <span class="text-lg font-semibold text-gray-800">Join a Quiz: </span>
+                    
+                    <button [routerLink]="['/join']" class="text-white bg-teal-800 hover:bg-teal-900 font-medium rounded text-sm w-full px-6 py-3 text-center">
+                        Join
+                    </button>
+        
+                </div>
+
+                <div class="flex flex-col bg-white rounded-md shadow-md p-3">
+
+                    <span class="font-semibold text-gray-800">Upcoming Assignments: </span>
+                    <div *ngFor="let assignment of upcomingAssignments.slice(0, 5)" class="pt-4">
+                        <div [routerLink]="['/class', assignment.classroom.id]" class="bg-white flex flex-col gap-1 shadow-md border-b rounded-md p-3 cursor-pointer">
+                            <div class="flex justify-between">
+                                <span>{{ assignment.name }}</span>
+                                <span>{{ calculateTimeDifference(assignment.releaseTime) }}</span>
+                            </div>
+                            <span>{{ assignment.classroom.name }}</span>
+                        </div>
+                    </div>
+                    <div *ngIf="upcomingAssignments.length === 0" class="pt-4">
+                        No upcoming assignments!
+                    </div>
+                            
+                </div>
+
+                <div class="flex flex-col bg-white rounded-md shadow-md p-3">
+
+                    <span class="font-semibold text-gray-800">Assignment Reports: </span>
+                    <div *ngFor="let assignment of completions.slice(-4).reverse(); let i = index" class="pt-4">
+                        <div [routerLink]="['/info', assignment.id]" class="bg-white flex flex-col gap-1 shadow-md border-b rounded-md p-3 cursor-pointer">
+                            <div class="flex justify-between">
+                                <span>{{ assignment.name }}</span>
+                                <span>{{ calculateTimeDifference(assignment.deadline) }}</span>
+                            </div>
+                            <span>{{ assignment.classroom.name }}</span>
+                        </div>
+                    </div>
+                    <div *ngIf="completions.length === 0" class="pt-4">
+                        No upcoming assignments!
+                    </div>
+                    <span [routerLink]="['/class']" class="pt-3 text-center underline text-blue-700 cursor-pointer">See all...</span>
+                            
+                </div>
+
+            </div>
+
+        </div>
+
+        <div>
+
+            <div class="flex flex-col bg-white rounded-md shadow-md p-3">
+
+                <span class="font-semibold text-gray-800">Live Assignments: </span>
+                <div *ngIf="todoAssignments.length > 0">
+                    <div *ngFor="let assignment of todoAssignments.slice(0, 5)" class="pt-4">
+                        <div [routerLink]="['/class', assignment.classroom.id]" class="bg-white flex flex-col gap-1 shadow-md border-b rounded-md p-3 cursor-pointer">
+                            <div class="flex justify-between">
+                                <span>{{ assignment.name }}</span>
+                                <span>{{ calculateTimeDifference(assignment.deadline) }}</span>
+                            </div>
+                            <span>{{ assignment.classroom.name }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="todoAssignments.length === 0">
+                    <span>Nothing to see here!</span>
+                </div>
+                <span [routerLink]="['/class']" class="pt-3 text-center underline text-blue-700 cursor-pointer">See all...</span>
+                
+    
+            </div>
+            
+        </div>
+        
+
+    </div>
+
+    <div class="w-[90%] mx-auto mb-5">
+        <div class="mx-auto rounded bg-gray-50 border shadow">
+            <div class="flex border-b-2">
+                
+                <div class="relative inline-flex items-center pl-2 px-4 py-1">
+                    <span class="p-2 font-semibold">Students</span>
+                </div>
+            </div>
+            <div class="flow-root max-h-full h-5/6">
+                <div class="grid grid-cols-12 gap-2 p-3 border bg-gray-100">
+                    <div class="col-span-3 flex">
+                        <p class="text-md font-medium text-gray-900 truncate">
+                            Name
+                        </p>
+                    </div>
+                    <div class="col-span-3 flex">
+                        <p class="text-md font-medium text-gray-900 truncate">
+                            Classroom
+                        </p>
+                    </div>
+                    <div class="col-span-3 flex">
+                        <p class="text-md font-medium text-gray-900 truncate">
+                            
+                        </p>
+                    </div>
+                    <div class="col-span-3 flex gap-1 items-center">
+                        <p class="pr-2 text-md font-medium text-gray-900 truncate">
+                            
+                        </p>
+                    </div>
+                
+                </div>   
+                <ul role="list" class="divide-y divide-gray-200">
+                    <ng-container *ngFor="let class of classes; let i = index">
+                        <ng-container *ngFor="let member of sortMembers(class)">
+                            <li *ngIf="class.members.length>0" class="py-4">
+                                <div class="grid grid-cols-12 px-3 gap-2 hover:cursor-pointer">
+                                    <div class="col-span-3 flex gap-1 items-center">
+                                        <p class="text-sm font-medium text-gray-900 truncate">
+                                          <!-- Display members in alphabetical order with duplicates grouped -->
+                                          <!-- <ng-container *ngFor="let member of sortMembers(class)"> -->
+                                            <a (click)="goToManageStudents(member.memberId, class.id)">{{ getUserName(member.memberId) }}</a>
+                                          <!-- </ng-container> -->
+                                        </p>
+                                      </div>
+                                    <div class="col-span-3 flex ">
+                                        <p class="text-sm font-medium text-gray-900 truncate">
+                                            {{ class.name }}
+                                        </p>
+                                    </div>
+                                    <div class="col-span-3 flex">
+                                        <p class="text-sm font-medium text-gray-900 truncate">
+                                            
+                                        </p>
+                                    </div>
+                                    <div class="col-span-3 flex gap-1 items-center">
+                                        <p class="text-sm font-medium text-gray-900 truncate">
+                                            
+                                        </p>
+                                    </div>
+                                
+                                </div>         
+                            </li>
+                        </ng-container>
+                        
+                    </ng-container>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+
+</div>

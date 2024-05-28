@@ -1,0 +1,175 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+
+<div class="pt-24 ml-20">
+
+    <!-- <div class="w-[80%] mx-auto mb-5">
+        <span class="font-medium">Assignment List</span>
+        <div *ngIf="todoAssignments.length > 0" class="flex flex-row gap-4 py-4 overflow-x-scroll flex-nowrap">
+            <div (click)="navToClass(assignment.classroom.id)" *ngFor="let assignment of todoAssignments" class="hover:cursor-pointer bg-white w-80 overflow-auto flex-shrink-0 rounded-md shadow-md flex justify-between items-center px-2 py-6">
+                <div class="flex flex-col">
+                    <span>{{ assignment.name }}</span>
+                    <span>{{ assignment.classroom.name }}</span>
+                </div>
+                <span>{{ calculateTimeDifference(assignment.deadline) }}</span>
+            </div>
+        </div>
+        <div *ngIf="todoAssignments.length === 0" class="bg-white mt-4 flex justify-center overflow-x-auto py-10 rounded-md shadow-md">
+            <span class="flex-shrink-0">Nothing to see here!</span>
+        </div>
+    </div>
+
+    <div class="w-[80%] mx-auto mb-5">
+        <span class="font-medium">Upcoming Assignments</span>
+        <div *ngIf="upcomingAssignments.length > 0" class="flex flex-row gap-4 py-4 overflow-x-auto">
+            <div (click)="navToClass(assignment.classroom.id)" *ngFor="let assignment of upcomingAssignments" class="hover:cursor-pointer bg-white w-80 overflow-auto flex-shrink-0 rounded-md shadow-md flex justify-between items-center px-2 py-6">
+                <div class="flex flex-col">
+                    <span>{{ assignment.name }}</span>
+                    <span>{{ assignment.classroom.name }}</span>
+                </div>
+                <span>{{ calculateTimeDifference(assignment.deadline) }}</span>
+            </div>
+        </div>
+        <div *ngIf="upcomingAssignments.length === 0" class="bg-white mt-4 flex overflow-x-auto justify-center py-10 rounded-md shadow-md">
+            <span class="flex-shrink-0">Nothing to see here!</span>
+        </div>
+    </div>
+
+    <div class="w-[80%] mx-auto">
+        <span class="font-medium">Past Assignments</span>
+        <div *ngIf="pastAssignments.length > 0" class="flex flex-row gap-4 py-4 overflow-x-auto">
+            <div (click)="navToClass(assignment.classroom.id)" *ngFor="let assignment of pastAssignments" class="hover:cursor-pointer bg-white w-80 overflow-auto flex-shrink-0 rounded-md shadow-md flex justify-between items-center px-2 py-6">
+                <div class="flex flex-col">
+                    <span>{{ assignment.name }}</span>
+                    <span>{{ assignment.classroom.name }}</span>
+                </div>
+                <span>{{ calculateTimeDifference(assignment.deadline) }}</span>
+            </div>
+        </div>
+        <div *ngIf="pastAssignments.length === 0" class="bg-white mt-4 flex overflow-x-auto justify-center py-10 rounded-md shadow-md">
+            <span class="flex-shrink-0">Nothing to see here!</span>
+        </div>
+        
+    </div> -->
+
+    <div class="w-[80%] mx-auto grid mt-8 grid-cols-3 grid-rows-10 gap-4 mb-5">
+
+        <div class="flex flex-col gap-5">
+
+            <div class="flex flex-col bg-white rounded-md shadow-md p-3">
+                <span class="font-semibold text-gray-800">Your Classes: </span>
+                <div *ngFor="let class of classes.slice(0,5)" class="pt-4">
+                    <div class="bg-white shadow-md border-b rounded-md p-3 cursor-pointer">
+                        <span>{{ class.name }}</span>
+                    </div>
+                </div>
+                <span [routerLink]="['/student-class']" class="pt-3 text-center underline text-blue-700 cursor-pointer">See all...</span>
+            </div>
+
+            <div class="flex flex-col bg-white rounded-md shadow-md p-3">
+                <span class="font-semibold text-gray-800 pb-3">Recent Performances (By Classroom): </span>
+
+                <div>
+                    <div *ngFor="let recentCompletion of recentCompletions; let i = index" class="pb-3 flex flex-col gap-3">
+                        <div *ngIf="recentCompletion.length > 0">
+                            <span class="font-semibold text-gray-700">{{ recentCompletion[0].assignment.classroom.name }}</span>
+                            <canvas [id]="'progressChart' + i"></canvas> 
+                        </div>
+                           
+                    </div>         
+                </div>
+
+                
+            </div>            
+
+        </div>
+
+        <div class="flex flex-col gap-5">
+
+            <div class="flex flex-col gap-7 justify-center">
+
+                <span *ngIf="user" class="text-3xl font-semibold text-gray-700 text-center">Good {{timeOfDay()}}, {{ user.firstname }}</span>
+                <span *ngIf="!user">Good {{timeOfDay()}}</span>
+                
+                <div class="flex flex-col gap-3 items-center bg-white rounded-md shadow-md p-3">
+
+                    <span class="text-lg font-semibold text-gray-800">Join a Quiz: </span>
+                    
+                    <button [routerLink]="['/join']" class="text-white bg-teal-800 hover:bg-teal-900 font-medium rounded text-sm w-full px-6 py-3 text-center">
+                        Join
+                    </button>
+        
+                </div>
+
+                <div class="flex flex-col bg-white rounded-md shadow-md p-3">
+
+                    <span class="font-semibold text-gray-800">Your Todo List: </span>
+                    <div *ngFor="let assignment of todoAssignments.slice(0, 5)" class="pt-4">
+                        <div [routerLink]="['/student-class', assignment.classroom.id]" class="bg-white flex flex-col gap-1 shadow-md border-b rounded-md p-3 cursor-pointer">
+                            <div class="flex justify-between">
+                                <span>{{ assignment.name }}</span>
+                                <span>{{ calculateTimeDifference(assignment.deadline) }}</span>
+                            </div>
+                            <span>{{ assignment.classroom.name }}</span>
+                        </div>
+                    </div>
+                    <span *ngIf="todoAssignments.length > 0" [routerLink]="['/student-class']" class="pt-3 text-center underline text-blue-700 cursor-pointer">See all...</span>
+    
+                    <div *ngIf="todoAssignments.length === 0" class="pt-4">
+                        No current assignments!
+                    </div>
+        
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="flex flex-col gap-5">
+
+            <div class="flex flex-col bg-white rounded-md shadow-md p-3">
+                <span class="font-semibold text-gray-800">Click Here for your Recent Reports:</span>
+                <div [routerLink]="['/student-report']" class="pt-3 text-center underline text-blue-700 cursor-pointer">
+                    <span>Here!</span>
+                </div>       
+            </div>
+
+            <div class="flex flex-col bg-white rounded-md shadow-md p-3">
+
+                <span class="font-semibold text-gray-800">Question Performance: </span>
+                
+                <canvas id="pieChart">{{ pieChart }}</canvas>
+
+                <div *ngIf="allCompletions.length === 0" class="pt-4">
+                    Not enough data!
+                </div>
+    
+            </div>
+
+            <div class="flex flex-col bg-white rounded-md shadow-md p-3">
+
+                <span class="font-semibold text-gray-800">Your Upcoming Assignments: </span>
+                <div *ngFor="let assignment of upcomingAssignments.slice(0, 5)" class="pt-4">
+                    <div [routerLink]="['/student-class', assignment.classroom.id]" class="bg-white flex flex-col gap-1 shadow-md border-b rounded-md p-3 cursor-pointer">
+                        <div class="flex justify-between">
+                            <span>{{ assignment.name }}</span>
+                            <span>{{ calculateTimeDifference(assignment.releaseTime) }}</span>
+                        </div>
+                        <span>{{ assignment.classroom.name }}</span>
+                    </div>
+                </div>
+                <div *ngIf="upcomingAssignments.length === 0" class="pt-4">
+                    No upcoming assignments!
+                </div>
+                        
+            </div>
+
+            
+            
+        </div>
+        
+
+    </div>
+
+</div>

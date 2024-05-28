@@ -1,5 +1,20 @@
-<button (click)="start()" type="button" class="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded text-sm w-full sm:w-auto px-3 py-2 text-center">Start</button>
-<p>Join Code: {{quizSession?.joinCode}}</p>
-<div *ngFor="let participant of participants">
-    <div>{{participant}}</div>
+<div class="h-screen bg-teal-700">
+
+    <div class="flex flex-col justify-center items-center text-4xl">
+        <span>Join Code:</span>
+        <span>{{quizSession?.joinCode}}</span>
+    </div>
+    
+    <div class="w-[80%] mx-auto p-10 flex gap-5">
+        <div *ngFor="let participant of participants">
+            <button class="text-lg font-semibold py-3 px-6 rounded-md shadow-md bg-white hover:bg-gray-200">{{participant}}</button>
+        </div>
+    </div>
+    
+
+    <button (click)="start()" type="button" class="absolute right-2 top-2 text-lg font-semibold bg-white py-2 px-4 rounded-sm shadow-md hover:bg-gray-200">Start</button>
+
+
 </div>
+
+

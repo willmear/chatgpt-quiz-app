@@ -25,7 +25,7 @@ public class Participant {
     @Enumerated(EnumType.STRING)
     private Status status;
     @ElementCollection(fetch = FetchType.EAGER)
-    private List<Integer> answers;
+    private List<Boolean> answers;
     @ManyToOne
     @JoinColumn(name="quiz_session_id")
     private QuizSession quizSession;

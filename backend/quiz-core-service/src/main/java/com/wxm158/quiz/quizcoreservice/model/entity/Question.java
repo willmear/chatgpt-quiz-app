@@ -20,6 +20,7 @@ public class Question {
     @Id
     @GeneratedValue
     private Long id;
+    private Long questionBankId;
     private String question;
     @ElementCollection
     private List<String> choices;
@@ -28,4 +29,5 @@ public class Question {
     private String questionType;
     private int timeSeconds;
     private int points;
+    private float difficulty;
 }

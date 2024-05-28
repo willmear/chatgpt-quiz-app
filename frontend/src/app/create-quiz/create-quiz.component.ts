@@ -22,7 +22,7 @@ export class CreateQuizComponent implements OnInit {
   topics: string[] = ["Software","Hardware","Resource Management", "Virtual Memory & Paging", "Main Memory", "Addressable Memory",
    "Buses", "I/O Controllers", "Von Neumann", "External Hardware Devices", "Digital Camera", "Barcode Reader", "RFID", "Laser Printer",
     "Magnetic Hard Disk", "Optical Disk", "Solid State Drive (SSD)", "Storage Devices Compared"];
-  questionTypes: string[] = ["Multiple Choice","True/False", "Multiple Answers"]
+  questionTypes: string[] = ["Multiple Choice","True/False", "Multiple Answers", "Ordering", "Drag and Drop", "Fill The Blanks"]
   questionAmounts: string[] = ["1","2","3","4","5","6","7","8","9","10"]
   initialTopic: String = "";
 
@@ -100,6 +100,11 @@ export class CreateQuizComponent implements OnInit {
   }
   toggleDropdown2() {
     this.isDropdownOpen2 = !this.isDropdownOpen2;
+  }
+
+  closeDropdown() {
+    this.isDropdownOpen1 = false;
+    this.isDropdownOpen2 = false;
   }
 
   updateSelectedOption1(option: string) {

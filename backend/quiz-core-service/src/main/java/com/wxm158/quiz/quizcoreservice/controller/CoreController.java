@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -28,6 +29,11 @@ public class CoreController {
     public Quiz getQuiz(@RequestHeader("x-auth-user-id") String userId,
                         @PathVariable String quizId) {
         return coreService.getQuiz(quizId, userId);
+    }
+
+    @GetMapping("/student/quiz/{quizId}")
+    public Quiz getQuizStudent(@PathVariable String quizId) {
+        return coreService.getQuizStudent(Long.valueOf(quizId));
     }
 
     @PutMapping("/quiz/{quizId}/publish")
@@ -62,5 +68,10 @@ public class CoreController {
     public ResponseEntity<Void> deleteQuiz(@PathVariable Long quizId) {
         return coreService.deleteQuiz(quizId);
     }
-    
+
+    @PutMapping("/last-played")
+    public ResponseEntity<Quiz> updateLastPlayed(@RequestHeader("x-auth-user-id") String userId,
+                                                 @RequestBody Long quizId) {
+        return coreService.updateLastPlayed(Long.valueOf(userId), quizId);
+    }
 }

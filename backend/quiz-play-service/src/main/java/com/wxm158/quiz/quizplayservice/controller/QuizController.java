@@ -50,4 +50,9 @@ public class QuizController {
         return quizSessionService.updateState(quizSession, sessionId);
     }
 
+    @GetMapping("/plays/{quizCoreId}")
+    Integer plays(@PathVariable Long quizCoreId) {
+        return quizSessionService.plays(quizCoreId);
+    }
+
 }

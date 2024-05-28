@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -19,13 +20,14 @@ public class Classroom {
     @GeneratedValue
     private Long id;
     private String name;
-    private String topic;
-    private LocalDate createdAt = LocalDate.now();
-//    @ManyToMany
-//    @JoinTable(
-//            name = "classroom_member",
-//            joinColumns = @JoinColumn(name = "classroom_id"),
-//            inverseJoinColumns = @JoinColumn(name = "member_id")
-//    )
-//    private List<Member> member;
+    private Long adminId;
+    private LocalDateTime createdAt;
+    private String joinCode;
+    @ManyToMany
+    @JoinTable(
+            name = "classroom_members",
+            joinColumns = @JoinColumn(name = "classroom_id"),
+            inverseJoinColumns = @JoinColumn(name = "member_id")
+    )
+    private List<Member> members;
 }

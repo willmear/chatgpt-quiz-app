@@ -1,0 +1,85 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<div class="ml-20 pt-28 h-auto">
+
+    <div class="w-[80%] mx-auto mb-4 px-4 py-6 bg-white rounded-md shadow-md flex justify-between">
+        <div class="flex flex-col">
+            <span class="text-xl font-medium">{{currentClass?.name}}</span>
+            <span class="text-md font-medium">Students: {{currentClass?.members?.length}}</span>
+        </div>
+        <div class="flex flex-col">
+            <span class="text-xl font-medium">Join Code:</span>
+            <span class="text-md font-medium ">{{currentClass?.joinCode}}</span>
+        </div>
+
+    </div>
+
+    <div *ngIf="assignments.length === 0" class="w-[80%] h-72 mx-auto bg-white rounded-md shadow-md flex justify-center items-center">
+        All caught up!
+    </div>
+    <div *ngIf="assignments.length != 0">
+        <!-- <div *ngFor="let assignment of assignments; let i = index" class="bg-white rounded-md shadow-md flex justify-between items-center">
+            <span (click)="takeQuiz(assignment.id)" class="text-xl w-full p-8 pl-4 hover:cursor-pointer">{{assignment.name}}</span> 
+            
+        </div> -->
+
+        <div class="w-[80%] mx-auto mb-5">
+            <span class="font-medium">Assignment List</span>
+            <div *ngIf="todoAssignments.length > 0" class="flex flex-row gap-4 py-4 overflow-x-scroll flex-nowrap">
+                <div (click)="takeQuiz(assignmentResponse.assignment.id, i)" *ngFor="let assignmentResponse of todoAssignments; let i = index" class="hover:cursor-pointer bg-white w-80 overflow-auto flex-shrink-0 rounded-md shadow-md flex justify-between items-center px-2 py-6">
+                    <div class="flex flex-col">
+                        <span>{{ assignmentResponse.assignment.name }}</span>
+                        <div *ngIf="assignmentResponse.assignment.multipleAttempts" class="font-semibold">
+                            <span *ngIf="assignmentResponse.completions.length > 0">Attempts: {{ assignmentResponse.completions.length }}</span>
+                            <span *ngIf="assignmentResponse.completions.length === 0">Unattempted (Multiple Submissions)</span>
+                        </div>
+                        <div *ngIf="!assignmentResponse.assignment.multipleAttempts" class="font-semibold">
+                            <span *ngIf="assignmentResponse.completions.length > 0">Submitted</span>
+                            <span *ngIf="assignmentResponse.completions.length === 0">Unattempted</span>
+                        </div>
+                    </div>
+                    <span>{{ calculateTimeDifference(assignmentResponse.assignment.deadline) }}</span>
+                </div>
+            </div>
+            <div *ngIf="todoAssignments.length === 0" class="bg-white mt-4 flex overflow-x-auto justify-center py-10 rounded-md shadow-md">
+                <span class="flex-shrink-0">Nothing to see here!</span>
+            </div>
+        </div>
+    
+        <div class="w-[80%] mx-auto mb-5">
+            <span class="font-medium">Upcoming Assignments</span>
+            <div *ngIf="upcomingAssignments.length > 0" class="flex flex-row gap-4 py-4 overflow-x-auto">
+                <div *ngFor="let assignmentResponse of upcomingAssignments" class="hover:cursor-pointer bg-white w-80 overflow-auto rounded-md shadow-md flex-shrink-0 flex justify-between items-center px-2 py-6">
+                    <div class="flex flex-col">
+                        <span>{{ assignmentResponse.assignment.name }}</span>
+                        <span>{{ assignmentResponse.assignment.classroom.name }}</span>
+                    </div>
+                    <span>{{ calculateReleaseTime(assignmentResponse.assignment.releaseTime) }}</span>
+                </div>
+            </div>
+            <div *ngIf="upcomingAssignments.length === 0" class="bg-white overflow-x-auto mt-4 flex justify-center py-10 rounded-md shadow-md">
+                <span class="flex-shrink-0">Nothing to see here!</span>
+            </div>
+        </div>
+    
+        <div class="w-[80%] mx-auto">
+            <span class="font-medium">Past Assignments</span>
+            <div *ngIf="pastAssignments.length > 0" class="flex flex-row gap-4 py-4 overflow-x-auto">
+                <div *ngFor="let assignmentResponse of pastAssignments" class="hover:cursor-pointer bg-white w-80 overflow-auto rounded-md shadow-md flex flex-shrink-0 justify-between items-center px-2 py-6">
+                    <div class="flex flex-col">
+                        <span>{{ assignmentResponse.assignment.name }}</span>
+                        <span>{{ assignmentResponse.assignment.classroom.name }}</span>
+                    </div>
+                    <span>{{ calculateTimeDifference(assignmentResponse.assignment.deadline) }}</span>
+                </div>
+            </div>
+            <div *ngIf="pastAssignments.length === 0" class="bg-white mt-4 overflow-x-auto flex justify-center py-10 rounded-md shadow-md">
+                <span class="flex-shrink-0">Nothing to see here!</span>
+            </div>
+            
+        </div>
+
+    </div>
+
+</div>

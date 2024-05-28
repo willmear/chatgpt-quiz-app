@@ -2,10 +2,12 @@ package com.wxm158.promptgeneration.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wxm158.promptgeneration.model.dto.ChatRequest;
+import com.wxm158.promptgeneration.model.dto.Difficulty;
 import com.wxm158.promptgeneration.model.dto.QuestionGeneration;
 import com.wxm158.promptgeneration.model.dto.TopicResponse;
 import com.wxm158.promptgeneration.model.entity.Question;
 import lombok.RequiredArgsConstructor;
+import org.apache.xmlbeans.impl.util.Diff;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.wxm158.promptgeneration.service.EmbeddingService;
@@ -35,6 +37,12 @@ public class EmbeddingController {
     @GetMapping("/questions")
     public List<Question> getAllQuestions(@RequestHeader("x-auth-user-id") String userId) {
         return embeddingService.getAllQuestions(userId);
+    }
+
+    @PostMapping("/questions/difficulty")
+    public ResponseEntity<Difficulty> updateDifficulty(@RequestHeader("x-auth-user-id") String userId,
+                                                       @RequestBody Difficulty difficulty) {
+        return embeddingService.updateDifficulty(difficulty);
     }
 
 }

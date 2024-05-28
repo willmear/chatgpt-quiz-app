@@ -1,26 +1,93 @@
-<div *ngIf="currentQuestion" class="bg-teal-900 h-screen">
+<div *ngIf="currentQuestion" class="bg-teal-700 h-screen">
 
-    <div *ngIf="currentState===state.PRE_QUESTION">
+    <div class="h-full flex flex-col justify-center items-center text-4xl" *ngIf="currentState===state.PRE_QUESTION">
         Get Ready
     </div>
 
-    <div *ngIf="(currentQuestion.questionType=='Multiple Choice' || currentQuestion.questionType=='Multiple Answers' || currentQuestion.questionType=='True/False') && !questionAnswered && currentState===state.QUESTION" class="grid grid-cols-2 gap-2 h-screen">
-        <div (click)="submitAnswer(i)" *ngFor="let choice of currentQuestion.choices; let i = index" class="bg-blue-600 flex items-center justify-center">
+    <div *ngIf="(currentQuestion.questionType=='Multiple Choice' || currentQuestion.questionType=='Multiple Answers' || currentQuestion.questionType=='True/False') && !questionAnswered && currentState===state.QUESTION" class="grid grid-cols-2 gap-2 h-screen p-2">
+        <div (click)="submitAnswer(i)" *ngFor="let choice of currentQuestion.choices; let i = index" class="bg-white hover:bg-gray-200 flex items-center justify-center shadow-md rounded-sm">
             
             {{choice}}
 
         </div>
     </div>
 
-    <div *ngIf="questionAnswered && currentState===state.QUESTION">
+    <div *ngIf="(currentQuestion.questionType=='Ordering') && !questionAnswered && currentState===state.QUESTION" class="w-1/2 mx-auto h-full flex flex-col justify-center" cdkDropList (cdkDropListDropped)="dropOrdering($event)">
+        <div *ngFor="let choice of orderedChoices; let i = index" cdkDrag class="cursor-pointer mb-2 bg-white h-14 rounded flex gap-2 items-center justify-center overflow-y-auto">
+            <div class="w-3 opacity-40">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg>
+            </div>
+            <div class="w-3/4 text-lg font-semibold">
+                {{choice}}
+            </div>
+            <div>
+                {{i+1}}
+            </div>
+        </div>
+        <button class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded text-sm px-6 py-3 text-center dark:bg-blue-600" (click)="submitOrdering()">Done</button>
+    </div>
+    
+    <div *ngIf="(currentQuestion.questionType=='Drag and Drop') && !questionAnswered && currentState===state.QUESTION" class="w-[90%] mx-auto h-full gap-5 flex flex-col justify-around items-center">
+        
+        <div 
+            cdkDropList
+            #chosenAnswerList="cdkDropList"
+            [cdkDropListData]="dragAndDropAnswer"
+            [cdkDropListConnectedTo]="[choicesList]"
+            (cdkDropListDropped)="drop($event)"
+            class="flex gap-2">
+            
+            <div *ngFor="let blank of questionParts.blanks; let i = index" cdkDrag class="border rounded-sm shadow-sm py-3 px-10">
+                <span>
+                    {{ dragAndDropAnswer[i] || 'Blank ' + (i+1) }}
+                </span>
+            </div>  
+        </div>
+              
+            <div
+                cdkDropList 
+                #choicesList="cdkDropList"
+                [cdkDropListData]="dragAndDropChoices" 
+                [cdkDropListConnectedTo]="[chosenAnswerList]"
+                (cdkDropListDropped)="drop($event)"
+                class="flex justify-around w-full">
+
+                <div class="border py-3 px-10 shadow-sm" *ngFor="let choice of dragAndDropChoices" cdkDrag [cdkDragDisabled]="dragAndDropAnswer.length === questionParts.blanks.length">
+                    <span>
+                        {{ choice }}
+                    </span>
+                </div>
+
+            </div>
+
+        <button (click)="submitDragAndDrop()" class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded text-sm px-6 py-3 text-center dark:bg-blue-600">Done</button>
+
+    </div>
+
+    <div *ngIf="(currentQuestion.questionType=='Fill The Blanks') && !questionAnswered && currentState===state.QUESTION" class="w-[90%] mx-auto flex flex-col h-full justify-center items-center">
+        
+        <div class="flex gap-2 items-center flex-grow">
+            <div *ngFor="let parts of questionPartsFtb; let i = index">
+                <div class="text-lg" *ngIf="parts.value !== null">{{parts.value}}</div>
+                <div *ngIf="parts.value === null">
+                    <input class="border rounded-sm p-2 w-full" type="text" name="{{i}}" [(ngModel)]="ftbAnswer">
+                </div>
+            </div>
+        </div>
+
+        <button (click)="submitFTB()" class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded text-sm px-6 py-3 text-center">Done</button>
+
+    </div>
+
+    <div class="h-full flex flex-col justify-center items-center text-4xl" *ngIf="questionAnswered && currentState===state.QUESTION">
         Wait for Results!
     </div>
 
-    <div *ngIf="currentState===state.POST_QUESTION">
-        loading...
+    <div class="h-full flex flex-col justify-center items-center text-4xl" *ngIf="currentState===state.POST_QUESTION">
+        Loading...
     </div>
 
-    <div *ngIf="currentState===state.LEADERBOARD">
-        check leaderboard
+    <div class="h-full flex flex-col justify-center items-center text-4xl" *ngIf="currentState===state.LEADERBOARD">
+        Check The Leaderboard!
     </div>
 </div>

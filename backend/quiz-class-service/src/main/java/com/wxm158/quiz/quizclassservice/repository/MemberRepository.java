@@ -10,17 +10,5 @@ import java.util.List;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    @Query("select memberId from Member where classroomId=:id")
-    List<Long> findAllByClassroomId(@Param("id") Long id);
 
-    @Query("select count(e) > 0 from Member e where e.memberId=:memberId and e.classroomId=:classroomId")
-    Boolean existsByClassroomIdAndMemberId(@Param("classroomId") Long classroomId, @Param("memberId") Long memberId);
-
-    void deleteByClassroomId(Long classroomId);
-
-    @Modifying
-    @Query("delete from Member e where e.classroomId=:classroomId and e.memberId=:memberId")
-    void deleteByClassroomIdAndMemberId(@Param("classroomId") Long classroomId, @Param("memberId") Long memberId);
-
-    void deleteByMemberId(Long id);
 }

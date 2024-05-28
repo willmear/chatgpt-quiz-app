@@ -11,6 +11,7 @@ import com.wxm158.quiz.quizplayservice.repository.QuestionRepository;
 import com.wxm158.quiz.quizplayservice.repository.QuizRepository;
 import com.wxm158.quiz.quizplayservice.repository.QuizSessionRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class QuizSessionService {
 
     private final QuizSessionRepository repository;
@@ -43,6 +45,7 @@ public class QuizSessionService {
 //    CREATE QUIZ
     public ResponseEntity<QuizSession> createQuizSession(Quiz quiz) {
         List<Question> questionList = questionRepository.saveAll(quiz.getQuestions());
+        log.info("saved questions {}", questionList);
         quiz.setQuestions(questionList);
         Quiz savedQuiz = quizRepository.save(quiz);
         QuizSession quizSession = QuizSession.builder()
@@ -85,6 +88,9 @@ public class QuizSessionService {
     * */
     public Participant saveParticipant(ParticipantMessage participantMessage) {
         QuizSession quizSession = repository.findById(participantMessage.getQuizSessionId()).orElse(null);
+        if (quizSession == null) {
+            return null;
+        }
         if (!participantRepository.existsParticipantByAliasAndQuizSessionId(participantMessage.getParticipant(),
                 quizSession.getId()) && participantMessage.getType() == MessageType.JOIN) {
             Participant newParticipant = Participant.builder()
@@ -109,18 +115,55 @@ public class QuizSessionService {
         Quiz quiz = quizSession.getQuiz();
         Question question = quiz.getQuestions().get(quiz.getCurrentQuestion());
 
-        List<Integer> participantAnswers = participant.getAnswers();
-        participantAnswers.add(answer.getAnswer());
-        participant.setAnswers(participantAnswers);
-        for (Integer i: question.getAnswer()) {
-            if (Objects.equals(i, Integer.valueOf(answer.getAnswer()))) {
-                var points = participant.getPoints();
-                points += question.getPoints();
-                participant.setPoints(points);
-                participantRepository.save(participant);
-                return answer;
+        List<Boolean> participantAnswers = participant.getAnswers();
+        log.info("question type {}", question.getQuestionType());
+        if (question.getQuestionType().equals("Ordering")) {
+            var points = participant.getPoints();
+            for (int i=0; i< question.getAnswer().size(); i++) {
+                if (Objects.equals(question.getAnswer().get(i), Integer.valueOf(answer.getAnswer().getAnswer().get(i)))) {
+                    points += question.getPoints()/question.getChoices().size();
+                }
+            }
+            participant.setPoints(points);
+            participantAnswers.add(Boolean.TRUE);
+            participant.setAnswers(participantAnswers);
+            participantRepository.save(participant);
+            return answer;
+        } else if (question.getQuestionType().equals("Drag and Drop")) {
+            if (answer.getAnswer().getAnswer().equals(question.getAnswer())) {
+                participant.setPoints(participant.getPoints()+question.getPoints());
+                participantAnswers.add(Boolean.TRUE);
+            } else {
+                participantAnswers.add(Boolean.FALSE);
+            }
+            participant.setAnswers(participantAnswers);
+            participantRepository.save(participant);
+            return answer;
+        } else if (question.getQuestionType().equals("Fill The Blanks")) {
+            if (question.getAnswer().contains(answer.getAnswer().getAnswer().get(0))) {
+                participant.setPoints(participant.getPoints()+question.getPoints());
+                participantAnswers.add(Boolean.TRUE);
+            } else {
+                participantAnswers.add(Boolean.FALSE);
+            }
+            participant.setAnswers(participantAnswers);
+            participantRepository.save(participant);
+            return answer;
+        }
+        else {
+            for (Integer i: question.getAnswer()) {
+                if (Objects.equals(i, Integer.valueOf(answer.getAnswer().getAnswer().get(0)))) {
+                    var points = participant.getPoints();
+                    points += question.getPoints();
+                    participant.setPoints(points);
+                    participantAnswers.add(Boolean.TRUE);
+                    participant.setAnswers(participantAnswers);
+                    participantRepository.save(participant);
+                    return answer;
+                }
             }
         }
+
 
         return answer;
 
@@ -146,5 +189,9 @@ public class QuizSessionService {
             repository.save(quizSession);
         }
         return nextQuestion.getState();
+    }
+
+    public Integer plays(Long quizCoreId) {
+        return repository.countAllByQuizCoreId(quizCoreId);
     }
 }

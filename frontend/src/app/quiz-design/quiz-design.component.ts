@@ -27,7 +27,6 @@ export class QuizDesignComponent implements OnInit {
   points: number[] = [100,200,300,400,500];
   topic: string = '';
   searched: boolean = false;
-  // generatedQuestions: String[] = ['test', 'test2', 'test3'];
   generatedQuestions: Question[] = [];
   openChoices: boolean = false;
 
@@ -62,9 +61,18 @@ export class QuizDesignComponent implements OnInit {
 
   drop(event: CdkDragDrop<string[]>) {
     if (this.quiz) {
+      this.currentQuestion = event.currentIndex;
       moveItemInArray(this.quiz.questions, event.previousIndex, event.currentIndex);
     }
   }
+
+  dropOrdering(event: CdkDragDrop<string[]>) {
+    if (this.quiz) {
+      moveItemInArray(this.quiz.questions[this.currentQuestion].answer, event.previousIndex, event.currentIndex);
+      console.log(this.quiz.questions[this.currentQuestion]);
+    }
+  }
+  
 
   changeCurrentQuestion(index: number) {
     this.currentQuestion = index;
@@ -72,13 +80,32 @@ export class QuizDesignComponent implements OnInit {
 
   onChoiceBlur(event: any, index: number) {
 
+
+    // index = this.quiz.questions[this.currentQuestion].answer.indexOf(index);
+
+    // const editedChoice = event.target.innerText;
+
+    // if (this.quiz) {
+    //   this.quiz.questions[this.currentQuestion].choices[index] = editedChoice;
+    //   console.log(this.quiz.questions[this.currentQuestion])
+
+    // }
+
+    const answerIndex = this.quiz.questions[this.currentQuestion].answer[index];
     const editedChoice = event.target.innerText;
 
     if (this.quiz) {
-      this.quiz.questions[this.currentQuestion].choices[index] = editedChoice;
+        this.quiz.questions[this.currentQuestion].choices[answerIndex] = editedChoice;
+        console.log(this.quiz.questions[this.currentQuestion]);
     }
 
   }
+
+  getChoice(index: number) {
+    const answerIndex = this.quiz.questions[this.currentQuestion].answer[index];
+    return this.quiz.questions[this.currentQuestion].choices[answerIndex];
+}
+
 
   changeCorrectChoice(index: number) {
     if (this.quiz) {
@@ -95,7 +122,6 @@ export class QuizDesignComponent implements OnInit {
     const editedQuestion = event.target.innerText;
     if (this.quiz) {
       this.quiz.questions[this.currentQuestion].question = editedQuestion;
-
     }
   }
 
@@ -136,6 +162,10 @@ export class QuizDesignComponent implements OnInit {
   togglePointsDropdown() {
     this.pointsDropdown = !this.pointsDropdown;
   }
+  closeDropdown() {
+    this.timeDropdown = false;
+    this.pointsDropdown = false;
+  }
   toggleAddQuestions() {
     this.addQuestions = !this.addQuestions;
   }
@@ -146,6 +176,9 @@ export class QuizDesignComponent implements OnInit {
   updatePoints(option: number) {
     this.quiz.questions[this.currentQuestion].points = option;
     this.togglePointsDropdown();
+  }
+  closeAddQuestion() {
+    this.addQuestions = false;
   }
 
   openQuestionBank() {
@@ -233,7 +266,7 @@ export class QuizDesignComponent implements OnInit {
 
   addToQuiz() {
     for (let currQuestion of this.selectedQuestions) {
-      let newQuestion: QuizQuestions = {id: undefined, question: currQuestion.question, choices: currQuestion.choices, answer: currQuestion.answer, questionType: currQuestion.questionType, timeSeconds: 20, points: 200 };
+      let newQuestion: QuizQuestions = {id: undefined, questionBankId: currQuestion.id, question: currQuestion.question, choices: currQuestion.choices, answer: currQuestion.answer, questionType: currQuestion.questionType, timeSeconds: 20, points: 200, difficulty: undefined };
       this.quiz.questions.push(newQuestion);
     }
     this.selectedQuestions = [];
@@ -242,12 +275,13 @@ export class QuizDesignComponent implements OnInit {
 
   deleteQuestion() {
     this.quiz.questions.splice(this.currentQuestion, 1);
+    this.currentQuestion--;
   }
 
   createQuestion(type: string) {
     switch(type) {
       case 'Multiple Choice':
-        this.quiz.questions.push({id: undefined, question: 'Question', choices: ['Answer 1', 'Answer 2'], answer: [0], questionType: type, timeSeconds: 20, points: 200});
+        this.quiz.questions.push({id: undefined, question: 'Question', choices: ['Answer 1', 'Answer 2', 'Answer 3', 'Answer 4'], answer: [0], questionType: type, timeSeconds: 20, points: 200});
         break;
       case 'Multiple Answers':
         this.quiz.questions.push({id: undefined, question: 'Question', choices: ['Answer 1', 'Answer 2', 'Answer 3', 'Answer 4'], answer: [0, 1], questionType: type, timeSeconds: 20, points: 200});
@@ -255,7 +289,19 @@ export class QuizDesignComponent implements OnInit {
       case 'True/False':
         this.quiz.questions.push({id: undefined, question: 'Question', choices: ['True', 'False'], answer: [0], questionType: type, timeSeconds: 20, points: 200});
         break;
+      case 'Ordering':
+        this.quiz.questions.push({id: undefined, question: 'Question', choices: ['First', 'Second', 'Third', 'Fourth'], answer: [0,1,2,3], questionType: type, timeSeconds: 20, points: 200});
+        break;
+      case 'Drag and Drop':
+        this.quiz.questions.push({id: undefined, question: 'Question _', choices: ['First', 'Second', 'Third', 'Fourth'], answer: [0], questionType: type, timeSeconds: 20, points: 200});
+        break;
+      case 'Fill The Blanks':
+        this.quiz.questions.push({id: undefined, question: 'Question _', choices: ['First'], answer: [0], questionType: type, timeSeconds: 20, points: 200});
+        break;
       default:
+    }
+    if (this.quiz.questions.length-1 > this.currentQuestion) {
+      this.currentQuestion++;
     }
     this.toggleAddQuestions();
   }
@@ -291,7 +337,7 @@ export class QuizDesignComponent implements OnInit {
 
   addGeneratedQuestion(index: number) {
     const question = this.generatedQuestions[index];
-    let newQuestion: QuizQuestions = {id: undefined, question: question.question, choices: question.choices, answer: question.answer, questionType: question.questionType, timeSeconds: 20, points: 200 };
+    let newQuestion: QuizQuestions = {id: undefined, questionBankId: undefined, question: question.question, choices: question.choices, answer: question.answer, questionType: question.questionType, timeSeconds: 20, points: 200, difficulty: undefined };
     this.quiz.questions.push(newQuestion);
   }
 

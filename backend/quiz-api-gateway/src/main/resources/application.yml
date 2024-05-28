@@ -37,6 +37,14 @@ spring:
             - Path=/user/**
           filters:
             - StripPrefix=1
+        ## USER SERVICE with AuthFilter
+        - id: quiz-user-service-auth
+          uri: lb://quiz-user-service
+          predicates:
+            - Path=/user-auth/**
+          filters:
+            - StripPrefix=1
+            - AuthFilter
         ## CLASS SERVICE
         - id: quiz-class-service
           uri: lb://quiz-class-service
